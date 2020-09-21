@@ -1,11 +1,10 @@
 {
-  "name": "VelvetStones",
-  "displayName": "VelvetStones",
+  "name": "Velvet Stones",
+  "displayName": "Velvet Stones",
   "expo": {
     "name": "VelvetStones",
     "slug": "VelvetStones",
     "version": "1.0.0",
-    "userInterfaceStyle": "automatic",
     "assetBundlePatterns": ["**/*"]
   }
 }

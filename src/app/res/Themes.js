@@ -1,6 +1,14 @@
+import {
+  DarkTheme as PaperDarkTheme,
+  DefaultTheme as PaperDefaultTheme,
+} from "react-native-paper";
+
 const AppDefaultTheme = {
+  name: "Light Theme",
   dark: false,
+  ...PaperDefaultTheme,
   colors: {
+    ...PaperDefaultTheme.colors,
     primary: "rgb(255, 255, 255)",
     accent: "rgb(192, 24, 91)",
     accentDark: "rgb(139, 0, 50)",
@@ -15,8 +23,11 @@ const AppDefaultTheme = {
 };
 
 const AppDarkTheme = {
+  name: "Dark Theme",
   dark: true,
+  ...PaperDarkTheme,
   colors: {
+    ...PaperDarkTheme.colors,
     primary: "rgb(36, 36, 36)",
     accent: "rgb(192, 24, 91)",
     accentDark: "rgb(139, 0, 50)",

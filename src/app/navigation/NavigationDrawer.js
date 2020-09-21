@@ -3,11 +3,15 @@ import { createDrawerNavigator } from "@react-navigation/drawer";
 import Cart from "../screens/Cart";
 import ActiveLinks from "../screens/ActiveLinks";
 import RootStacks from "./RootStacks";
+import { CustomDrawerContent } from "./../components/CustomDrawerContent";
 
 const Drawer = createDrawerNavigator();
 
 const NavigationDrawer = () => (
-  <Drawer.Navigator hideStatusBar={true}>
+  <Drawer.Navigator
+    drawerContent={(props) => <CustomDrawerContent {...props} />}
+    hideStatusBar={true}
+  >
     <Drawer.Screen name="Home" component={RootStacks} />
     <Drawer.Screen name="Cart" component={Cart} />
     <Drawer.Screen name="Links" component={ActiveLinks} />
