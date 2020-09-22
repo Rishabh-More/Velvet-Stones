@@ -34,6 +34,8 @@ export function DrawerHeaderContent(theme) {
 const drawerHeader = StyleSheet.create({
   container: {
     paddingLeft: 20,
+    marginTop: 20,
+    marginBottom: 20,
   },
   userInfo: {
     flexDirection: "column",

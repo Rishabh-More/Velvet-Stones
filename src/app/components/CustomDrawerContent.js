@@ -7,7 +7,7 @@ import { ThemeContext } from "../../App";
 import { DrawerContentScrollView, DrawerItem } from "@react-navigation/drawer";
 import { SafeAreaView, View, Text, StyleSheet } from "react-native";
 import ToggleSwitch from "toggle-switch-react-native";
-import { Drawer, TouchableRipple } from "react-native-paper";
+import { Drawer, TouchableRipple, Divider } from "react-native-paper";
 import { DrawerHeaderContent } from "./DrawerHeaderContent";
 
 export function CustomDrawerContent(props) {
@@ -20,6 +20,7 @@ export function CustomDrawerContent(props) {
       <DrawerContentScrollView {...props}>
         <View style={drawer.drawerContainer}>
           <DrawerHeaderContent {...theme} />
+          <Divider />
           <Drawer.Section style={drawer.drawerSection}>
             <DrawerItem
               icon={({ size }) => (
@@ -58,20 +59,25 @@ export function CustomDrawerContent(props) {
             />
           </Drawer.Section>
           <Drawer.Section title="Theme">
-            <TouchableRipple onPress={() => setDarkTheme(!isDarkTheme)}>
+            <TouchableRipple
+              rippleColor={colors.accent}
+              onPress={() => setDarkTheme(!isDarkTheme)}
+            >
               <View style={drawer.preferences}>
-                <Icon
-                  name={dark ? "moon-waning-crescent" : "white-balance-sunny"}
-                  color={colors.accent}
-                  size={20}
-                />
-                <Text style={{ color: colors.text }}>{name}</Text>
+                <View style={{ flex: 1, flexDirection: "row" }}>
+                  <Icon
+                    style={{ marginLeft: 5, marginRight: 10 }}
+                    name={dark ? "moon-waning-crescent" : "white-balance-sunny"}
+                    color={colors.accent}
+                    size={20}
+                  />
+                  <Text style={{ color: colors.text }}>{name}</Text>
+                </View>
                 {/**Add your Toggle Switch Here */}
                 <View pointerEvents="none">
                   <ToggleSwitch
                     isOn={dark}
                     onColor={colors.accent}
-                    labelStyle={{ color: "black", fontWeight: "900" }}
                     size="medium"
                     onToggle={(isOn) => console.log("changed to : ", isOn)}
                   />
@@ -99,11 +105,11 @@ const drawer = StyleSheet.create({
     flex: 1,
   },
   drawerSection: {
-    marginTop: 15,
+    marginTop: 10,
   },
   preferences: {
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "space-around",
     paddingVertical: 12,
     paddingHorizontal: 16,
   },
