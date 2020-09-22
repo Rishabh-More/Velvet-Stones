@@ -20,7 +20,11 @@ const RootStacks = () => (
       component={CatalogueStacks}
       options={{ headerShown: false }}
     />
-    <RootStack.Screen name="filter" component={Filter} />
+    <RootStack.Screen
+      name="filter"
+      component={Filter}
+      options={{ headerTitle: "Product Filters" }}
+    />
   </RootStack.Navigator>
 );
 

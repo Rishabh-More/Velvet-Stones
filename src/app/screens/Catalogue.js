@@ -1,12 +1,20 @@
 import React, { useState, useEffect } from "react";
-import useDeviceOrientation from "@react-native-community/hooks";
+import { useTheme } from "@react-navigation/native";
+import {
+  useDeviceOrientation,
+  useDimensions,
+} from "@react-native-community/hooks";
 import { isTablet, isPhone } from "react-native-device-detection";
-import { SafeAreaView, View, Text, StyleSheet } from "react-native";
+import { SafeAreaView, View, Text, StyleSheet, StatusBar } from "react-native";
+import { CatalogueCustomHeader } from "../components/CatalogueCustomHeader";
 
 export default function Catalogue() {
+  const { colors, dark } = useTheme();
+  const dimensions = useDimensions();
+  console.log("screen dimensions", dimensions);
   return (
     <SafeAreaView style={styles.container}>
-      <Text>This is Catalogue Screen</Text>
+      <CatalogueCustomHeader />
     </SafeAreaView>
   );
 }
@@ -14,7 +22,6 @@ export default function Catalogue() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
     alignItems: "center",
   },
 });
