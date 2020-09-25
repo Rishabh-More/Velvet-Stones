@@ -16,29 +16,48 @@ export default function Catalogue() {
   return (
     <SafeAreaView style={styles.container}>
       <CatalogueCustomHeader />
-      <FlatList onViewableItemsChanged />
+      {/* <FlatList onViewableItemsChanged /> */}
       <View style={{ width: "100%", flex: 1 }}>
         <View
           style={{
             flex: 1,
             position: "absolute",
-            opacity: 0.9,
-            backgroundColor: colors.primary,
             width: "100%",
             height: "100%",
-            alignItems: "center",
-            justifyContent: "center",
           }}
         >
-          <Text style={{ color: colors.text }}>
-            Please Wait, Updating List...
-          </Text>
-          <BarIndicator
-            size={30}
-            count={5}
-            color={colors.accent}
-            style={{ maxHeight: 75 }}
-          />
+          <View
+            style={{
+              flex: 1,
+              position: "absolute",
+              opacity: dark ? 0.3 : 0.9,
+              backgroundColor: dark ? colors.accentDark : colors.primary,
+              width: "100%",
+              height: "100%",
+              zIndex: 1,
+            }}
+          ></View>
+          <View
+            style={{
+              flex: 1,
+              zIndex: 2,
+              width: "100%",
+              height: "100%",
+              opacity: 1,
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <Text style={{ color: colors.text }}>
+              Please Wait, Updating List...
+            </Text>
+            <BarIndicator
+              size={30}
+              count={5}
+              color={colors.accent}
+              style={{ maxHeight: 75 }}
+            />
+          </View>
         </View>
       </View>
     </SafeAreaView>
