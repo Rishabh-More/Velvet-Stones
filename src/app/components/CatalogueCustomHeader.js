@@ -1,22 +1,22 @@
-import React, { useState, useEffect } from "react";
-import { useTheme, useNavigation } from "@react-navigation/native";
-import { View, Text, StyleSheet, StatusBar } from "react-native";
+import React, {useState, useEffect} from "react";
+import {useTheme, useNavigation} from "@react-navigation/native";
+import {View, Text, StyleSheet, StatusBar} from "react-native";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
-import { Searchbar } from "react-native-paper";
+import {Searchbar} from "react-native-paper";
 import SwitchSelector from "react-native-switch-selector";
 
-export function CatalogueCustomHeader() {
-  const { colors, dark } = useTheme();
-  const navigation = useNavigation();
-  console.log("nav props", navigation);
+export function CatalogueCustomHeader () {
+  const {colors, dark}=useTheme();
+  const navigation=useNavigation();
+  //console.log("nav props", navigation);
 
   return (
     <View style={styles.parentContainer}>
       <StatusBar
-        barStyle={dark ? "light-content" : "dark-content"}
+        barStyle={dark? "light-content":"dark-content"}
         backgroundColor={colors.statusBar}
       />
-      <View style={{ backgroundColor: colors.primary }}>
+      <View style={{backgroundColor: colors.primary}}>
         <View style={styles.headerTopContentWrapper}>
           <Icon
             name="menu"
@@ -53,8 +53,8 @@ export function CatalogueCustomHeader() {
             backgroundColor="transparent"
             hasPadding
             options={[
-              { label: "Sku ", value: "sku" },
-              { label: "Design ", value: "design" },
+              {label: "Sku ", value: "sku"},
+              {label: "Design ", value: "design"},
             ]}
           />
           <Icon
@@ -69,7 +69,7 @@ export function CatalogueCustomHeader() {
             style={[
               styles.searchStyle,
               {
-                borderColor: dark ? colors.border : colors.accent,
+                borderColor: dark? colors.border:colors.accent,
               },
             ]}
             placeholder="Search Products"
@@ -81,15 +81,15 @@ export function CatalogueCustomHeader() {
   );
 }
 
-const styles = StyleSheet.create({
-  parentContainer: { width: "100%" },
+const styles=StyleSheet.create({
+  parentContainer: {width: "100%"},
   headerTopContentWrapper: {
     flexDirection: "row",
     margin: 10,
     alignItems: "center",
   },
-  headerBottomContentWrapper: { margin: 10 },
-  titleViewWrapper: { flex: 1, marginStart: 10, marginEnd: 10 },
+  headerBottomContentWrapper: {margin: 10},
+  titleViewWrapper: {flex: 1, marginStart: 10, marginEnd: 10},
   searchStyle: {
     borderRadius: 5,
     borderWidth: 0.5,
