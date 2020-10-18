@@ -1,8 +1,5 @@
 import React from "react";
-import {
-  createStackNavigator,
-  CardStyleInterpolators,
-} from "@react-navigation/stack";
+import { createStackNavigator, CardStyleInterpolators } from "@react-navigation/stack";
 import CatalogueStacks from "./CatalogueStacks";
 import Filter from "./../screens/Filter";
 
@@ -13,18 +10,9 @@ const RootStacks = () => (
     mode="modal"
     screenOptions={{
       cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
-    }}
-  >
-    <RootStack.Screen
-      name="root-catalogue"
-      component={CatalogueStacks}
-      options={{ headerShown: false }}
-    />
-    <RootStack.Screen
-      name="filter"
-      component={Filter}
-      options={{ headerTitle: "Product Filters" }}
-    />
+    }}>
+    <RootStack.Screen name="root-catalogue" component={CatalogueStacks} options={{ headerShown: false }} />
+    <RootStack.Screen name="filter" component={Filter} options={{ headerTitle: "Product Filters" }} />
   </RootStack.Navigator>
 );
 

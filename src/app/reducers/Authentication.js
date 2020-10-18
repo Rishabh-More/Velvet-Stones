@@ -1,8 +1,10 @@
-const initialAuth = {
-
+const initialAuth={
+    isAppStartUp: true,
+    isSignedIn: false,
+    authToken: "",
 };
 
-const authReducer = (state, action) => {
+const authReducer=(state, action) => {
     switch (action.type) {
         default:
             return state;
