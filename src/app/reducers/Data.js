@@ -1,4 +1,4 @@
-const initialData={
+const initialData = {
   catalogue: [],
   products: [],
   filter: [],
@@ -6,13 +6,15 @@ const initialData={
   links: [],
 };
 
-const dataReducer=(state, action) => {
+const dataReducer = (state, action) => {
   switch (action.type) {
-    case 'UPDATE_PRODUCTS':
-      return {...state, products: action.payload}
+    case "SET_PRODUCTS":
+      return { ...state, catalogue: action.payload, products: action.payload };
+    case "UPDATE_PRODUCTS":
+      return { ...state, products: action.payload };
     default:
       return state;
   }
 };
 
-export {initialData, dataReducer};
+export { initialData, dataReducer };
