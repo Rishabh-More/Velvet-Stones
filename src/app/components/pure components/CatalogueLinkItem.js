@@ -1,24 +1,106 @@
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useDeviceOrientation } from "@react-native-community/hooks";
 import { useTheme } from "@react-navigation/native";
-import { View, Text, StyleSheet } from "react-native";
-import { Card, Title } from "react-native-paper";
+import { useStore } from "../../config/Store";
+import { regenerateLinkOtp, expireCatalogueLink, shortShareableLink } from "../../api/ApiService";
+import { View, Text, StyleSheet, Share, Alert } from "react-native";
+import { Card, Title, Portal, Dialog } from "react-native-paper";
 import { Button } from "react-native-elements";
+import { Fold } from "react-native-animated-spinkit";
+import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+
 const CatalogueLinkItem = ({ link }) => {
   const orientation = useDeviceOrientation();
   const { colors, dark } = useTheme();
+
+  //State Code
+  const [shareDialog, setShareDialog] = useState(false);
+  const { state, dispatch } = useStore();
+
+  useEffect(() => {
+    console.log("links array is", state.data.links);
+  }, [state.data.links]);
+
+  function showConfirmationDialog() {
+    Alert.alert("Expire Link", `Are you sure you want to delete the link: ${link.name}?`, [
+      { text: "No", style: "cancel" },
+      {
+        text: "Yes",
+        style: "destructive",
+        onPress: () => {
+          deleteLink();
+        },
+      },
+    ]);
+  }
+
+  async function deleteLink() {
+    try {
+      expireCatalogueLink(link.id)
+        .then((success) => {
+          if (success) {
+            const index = state.data.links.map((item) => item.id).indexOf(link.id);
+            console.log("index is", index);
+            dispatch({ type: "DELETE_LINK", payload: index });
+          } else {
+            alert("Failed to expire Link");
+          }
+        })
+        .catch((error) => {
+          console.log("response error", error);
+        });
+    } catch (error) {
+      console.log("failed to expire", error);
+    }
+  }
+
+  function getShortenedUrl() {
+    setShareDialog(true);
+    shortShareableLink(link.catalogueUrl)
+      .then((url) => {
+        console.log("shortened link is", url);
+        //TODO Hide the Dialog and share this url via share method
+        setShareDialog(false);
+        shareCatalogueUrl(url);
+      })
+      .catch((error) => {
+        console.log("shorturl eror", error);
+      });
+  }
+
+  async function shareCatalogueUrl(url) {
+    const baseMessage = `Hi,\n Please Access your Catalogue using this link: ${url}.`;
+    const message = link.otp != null ? `${baseMessage}\n OTP: ${link.otp}` : baseMessage;
+    try {
+      const result = await Share.share({
+        message: message,
+      });
+      if (result.action === Share.sharedAction) {
+        if (result.activityType) {
+          // shared with activity type of result.activityType
+        } else {
+          // shared
+          console.log("link shared successfully");
+        }
+      } else if (result.action === Share.dismissedAction) {
+        // dismissed
+      }
+    } catch (error) {
+      console.log("sharing error", error);
+    }
+  }
+
   return (
     <Card style={styles.container}>
       <View style={styles.content}>
         <View style={styles.info}>
-          <Title style={{ margin: 10 }}>{link.name}</Title>
+          <Title style={{ marginTop: 10, marginStart: 10 }}>{link.name}</Title>
           <Text style={{ margin: 10, color: colors.text }} numberOfLines={1}>
             Link: {link.catalogueUrl}
           </Text>
           <View
             style={{
               margin: 5,
-              marginBottom: 10,
               height: 50,
               borderColor: link.otp != null ? colors.accent : "grey",
               backgroundColor: link.otp != null ? "transparent" : "rgba(128, 128, 128, 0.1)",
@@ -51,19 +133,41 @@ const CatalogueLinkItem = ({ link }) => {
           <Button
             title="Share"
             type="outline"
-            titleStyle={{ color: colors.accent }}
-            buttonStyle={{ borderColor: colors.accent, height: 50, borderRadius: 15 }}
+            titleStyle={{ marginStart: 5, color: colors.accent }}
+            icon={<Icon name="share-variant" size={20} color={colors.accent} />}
+            buttonStyle={{
+              borderColor: colors.accent,
+              height: 50,
+              borderRadius: 15,
+            }}
             containerStyle={{ margin: 5, height: 50 }}
+            onPress={() => getShortenedUrl()}
           />
           <Button
             title="Expire Link"
             type="outline"
-            titleStyle={{ color: colors.accent }}
-            buttonStyle={{ borderColor: colors.accent, height: 50, borderRadius: 15 }}
+            titleStyle={{ marginStart: 5, color: colors.accent }}
+            icon={<Icon name="trash-can-outline" size={20} color={colors.accent} />}
+            buttonStyle={{
+              borderColor: colors.accent,
+              height: 50,
+              borderRadius: 15,
+            }}
             containerStyle={{ margin: 5 }}
+            onPress={() => showConfirmationDialog()}
           />
         </View>
       </View>
+      <Portal>
+        <Dialog visible={shareDialog} style={{ borderRadius: 15 }} dismissable={false}>
+          <Dialog.Content style={{ alignItems: "center" }}>
+            <Fold size={30} color={colors.accent} />
+            <Text style={{ margin: 15, color: colors.text }}>
+              Please Wait, getting your link...
+            </Text>
+          </Dialog.Content>
+        </Dialog>
+      </Portal>
     </Card>
   );
 };
@@ -85,7 +189,7 @@ const styles = StyleSheet.create({
   },
   buttons: {
     flex: 1,
-    justifyContent: "space-evenly",
+    justifyContent: "space-between",
   },
 });
 

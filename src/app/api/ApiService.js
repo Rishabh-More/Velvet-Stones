@@ -22,6 +22,8 @@ const GET_CATALOGUE_LINKS = "catalogue";
 const REGENERATE_OTP = "catalogue/regenerateOtp";
 const DELETE_LINK = "catalogue";
 
+const SHORT_LINK = "shorturl";
+
 const LOG_OUT = "logoutShop";
 
 let service = Axios.create({
@@ -197,6 +199,29 @@ function expireCatalogueLink(linkId) {
         },
       });
       if (response.data.status) {
+        resolve(response.data.status);
+      } else {
+        reject(response.data.message);
+      }
+    });
+  } catch (error) {
+    console.log("request error", error.message);
+  }
+}
+
+function shortShareableLink(link) {
+  try {
+    return new Promise(async function (resolve, reject) {
+      const response = await service.post(
+        SHORT_LINK,
+        { Url: link },
+        {
+          header: {
+            Authorization: AUTH_TOKEN,
+          },
+        }
+      );
+      if (response.data.status) {
         resolve(response.data.data);
       } else {
         reject(response.data.message);
@@ -236,5 +261,6 @@ export {
   generateCatalogueLink,
   regenerateLinkOtp,
   expireCatalogueLink,
+  shortShareableLink,
   logoutFromShop,
 };
