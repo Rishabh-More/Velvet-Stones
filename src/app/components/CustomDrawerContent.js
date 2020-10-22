@@ -23,46 +23,27 @@ export function CustomDrawerContent(props) {
           <Divider />
           <Drawer.Section style={drawer.drawerSection}>
             <DrawerItem
-              icon={({ size }) => (
-                <Icon name="home-outline" color={colors.accent} size={size} />
-              )}
-              label={() => (
-                <Text style={{ color: colors.text }}>Catalogue</Text>
-              )}
+              icon={({ size }) => <Icon name="home-outline" color={colors.accent} size={size} />}
+              label={() => <Text style={{ color: colors.text }}>Catalogue</Text>}
               onPress={() => props.navigation.navigate("Home")}
             />
             <DrawerItem
-              icon={({ size }) => (
-                <Icon name="cart-outline" color={colors.accent} size={size} />
-              )}
+              icon={({ size }) => <Icon name="cart-outline" color={colors.accent} size={size} />}
               label={() => <Text style={{ color: colors.text }}>Cart</Text>}
               onPress={() => props.navigation.navigate("Cart")}
             />
             <DrawerItem
-              icon={({ size }) => (
-                <Icon name="link-variant" color={colors.accent} size={size} />
-              )}
-              label={() => (
-                <Text style={{ color: colors.text }}>Active Links</Text>
-              )}
+              icon={({ size }) => <Icon name="link-variant" color={colors.accent} size={size} />}
+              label={() => <Text style={{ color: colors.text }}>Catalogue Links</Text>}
               onPress={() => props.navigation.navigate("Links")}
             />
             <DrawerItem
-              icon={({ size }) => (
-                <Icon
-                  name="account-outline"
-                  color={colors.accent}
-                  size={size}
-                />
-              )}
+              icon={({ size }) => <Icon name="account-outline" color={colors.accent} size={size} />}
               label={() => <Text style={{ color: colors.text }}>About Us</Text>}
             />
           </Drawer.Section>
           <Drawer.Section title="Theme">
-            <TouchableRipple
-              rippleColor={colors.accent}
-              onPress={() => setDarkTheme(!isDarkTheme)}
-            >
+            <TouchableRipple rippleColor={colors.accent} onPress={() => setDarkTheme(!isDarkTheme)}>
               <View style={drawer.preferences}>
                 <View style={{ flex: 1, flexDirection: "row" }}>
                   <Icon
@@ -89,9 +70,7 @@ export function CustomDrawerContent(props) {
       </DrawerContentScrollView>
       <Drawer.Section style={drawer.bottomSection}>
         <DrawerItem
-          icon={({ size }) => (
-            <Icon name="logout" color={colors.accent} size={size} />
-          )}
+          icon={({ size }) => <Icon name="logout" color={colors.accent} size={size} />}
           label={() => <Text style={{ color: colors.text }}>Log Out</Text>}
           onPress={() => console.log("signing out")}
         />

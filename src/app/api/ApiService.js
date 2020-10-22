@@ -4,7 +4,7 @@ import Axios from "axios";
 const BASE_URL = "http://139.59.26.142:1337/";
 
 const AUTH_TOKEN =
-  "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjpbeyJjcmVhdGVkQXQiOiIyMDIwLTEwLTE3VDA0OjQzOjM1LjAwMFoiLCJ1cGRhdGVkQXQiOiIyMDIwLTEwLTE4VDA3OjAxOjQ1LjAwMFoiLCJpZCI6MTU1LCJkZXZpY2VOYW1lIjoiT25lUGx1cyAzVCIsImRldmljZUlkIjoiMmRiN2FkODAiLCJicmFuZE5hbWUiOiJPbmVQbHVzIiwibW9kZWxOYW1lIjoiT05FUExVUyBBMzAwMyIsIm90cCI6NjYwMSwib3RwQ3JlYXRlZEF0IjoiMjAyMC0xMC0xOFQwNzowMTo0NC4wMDBaIiwiYXV0aEV4cGlyZUF0IjoiMjAyMC0xMC0xN1QwNjoyMjoxMS4wMDBaIiwib3RwRXhwaXJlQXQiOiIyMDIwLTEwLTE4VDA3OjExOjQ0LjAwMFoiLCJkZWxldGVkQXQiOm51bGwsInNob3BJZCI6MTE1fV0sImlhdCI6MTYwMzAwNDUyNSwiZXhwIjoxNjAzNjU5NzI1fQ.MsoOyVLSlEtjzGIWIeHw0b--D9mS_0UUk38voUxGRxk";
+  "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjpbeyJjcmVhdGVkQXQiOiIyMDIwLTEwLTIyVDA0OjU0OjQ2LjAwMFoiLCJ1cGRhdGVkQXQiOiIyMDIwLTEwLTIyVDA0OjU0OjQ2LjAwMFoiLCJpZCI6MTU2LCJkZXZpY2VOYW1lIjoiT25lUGx1cyAzVCIsImRldmljZUlkIjoiMmRiN2FkODAiLCJicmFuZE5hbWUiOiJPbmVQbHVzIiwibW9kZWxOYW1lIjoiT05FUExVUyBBMzAwMyIsIm90cCI6NDA5MCwib3RwQ3JlYXRlZEF0IjoiMjAyMC0xMC0yMlQwNDo1NDo0Ni4wMDBaIiwiYXV0aEV4cGlyZUF0IjpudWxsLCJvdHBFeHBpcmVBdCI6IjIwMjAtMTAtMjJUMDU6MDQ6NDYuMDAwWiIsImRlbGV0ZWRBdCI6bnVsbCwic2hvcElkIjoxMTV9XSwiaWF0IjoxNjAzMzQyNTA4LCJleHAiOjE2MDM5OTc3MDh9.7ljPAC2uP_T1H0figR_Kj_sSoKPMg-tjeVuS4ALCp5g";
 
 const SHOP_LOGIN = "shoplogin";
 const GENERATE_OTP = "generateotp";
@@ -14,8 +14,13 @@ const FETCH_PRODUCTS = "products/115";
 const GET_CUSTOMERS = "customers";
 const POST_CUSTOMERS = "customer";
 
-const POST_QUOTATION = "quotation";
-const POST_QUOTATION_DATA = `${POST_QUOTATION}/products`;
+const POST_ORDER = "order";
+const POST_ORDER_DATA = "orderproducts";
+
+const GENERATE_LINK = "catalogue/generate";
+const GET_CATALOGUE_LINKS = "catalogue";
+const REGENERATE_OTP = "catalogue/regenerateOtp";
+const DELETE_LINK = "catalogue";
 
 const LOG_OUT = "logoutShop";
 
@@ -88,6 +93,120 @@ function getProductsFromShop() {
   }
 }
 
+function generateOrder(order) {
+  try {
+    return new Promise(async function (resolve, reject) {
+      const response = await service.post(POST_ORDER, order, {
+        headers: {
+          Authorization: AUTH_TOKEN,
+        },
+      });
+      if (response.data.status) {
+        resolve(response.data.data);
+      } else {
+        reject(response.data.message);
+      }
+    });
+  } catch (error) {
+    console.log("request error", error.message);
+  }
+}
+
+function uploadProductsToOrder(orderId, products) {
+  try {
+    return new Promise(async function (resolve, reject) {
+      const response = await service.post(`${POST_ORDER_DATA}/${orderId}`, products, {
+        headers: {
+          Authorization: AUTH_TOKEN,
+        },
+      });
+      if (response.data.status) {
+        resolve(response.data.data);
+      } else {
+        reject(response.data.message);
+      }
+    });
+  } catch (error) {
+    console.log("request error", error.message);
+  }
+}
+
+function getCatalogueLinks(shopId) {
+  try {
+    return new Promise(async function (resolve, reject) {
+      const response = await service.get(`${GET_CATALOGUE_LINKS}/${shopId}`, {
+        headers: {
+          Authorization: AUTH_TOKEN,
+        },
+      });
+      if (response.data.status) {
+        resolve(response.data.data);
+      } else {
+        reject(response.data.message);
+      }
+    });
+  } catch (error) {
+    console.log("request error", error.message);
+  }
+}
+
+function generateCatalogueLink(link) {
+  try {
+    return new Promise(async function (resolve, reject) {
+      const response = await service.post(GENERATE_LINK, link, {
+        headers: {
+          Authorization: AUTH_TOKEN,
+        },
+      });
+      if (response.data.status) {
+        resolve(response.data.data);
+      } else {
+        reject(response.data.message);
+      }
+    });
+  } catch (error) {
+    console.log("request error", error.message);
+  }
+}
+
+function regenerateLinkOtp(link) {
+  try {
+    return new Promise(async function (resolve, reject) {
+      const response = await service.post(REGENERATE_OTP, link, {
+        headers: {
+          Authorization: AUTH_TOKEN,
+        },
+      });
+      if (response.data.status) {
+        resolve(response.data.data);
+      } else {
+        reject(response.data.message);
+      }
+    });
+  } catch (error) {
+    console.log("request error", error.message);
+  }
+}
+
+function expireCatalogueLink(linkId) {
+  try {
+    return new Promise(async function (resolve, reject) {
+      const response = await service.delete(`${DELETE_LINK}/${linkId}`, {
+        headers: {
+          Authorization: AUTH_TOKEN,
+        },
+      });
+      if (response.data.status) {
+        resolve(response.data.data);
+      } else {
+        reject(response.data.message);
+      }
+    });
+  } catch (error) {
+    console.log("request error", error.message);
+  }
+}
+
 function logoutFromShop(shopId, deviceId) {
   try {
     return new Promise(async function (resolve, reject) {
@@ -102,10 +221,20 @@ function logoutFromShop(shopId, deviceId) {
         reject(response.data.message);
       }
     });
-    console.log(response.data);
   } catch (error) {
     console.log("request error", error.message);
   }
 }
 
-export { generateLoginOTP, getProductsFromShop, loginToShop, logoutFromShop };
+export {
+  generateLoginOTP,
+  loginToShop,
+  getProductsFromShop,
+  generateOrder,
+  uploadProductsToOrder,
+  getCatalogueLinks,
+  generateCatalogueLink,
+  regenerateLinkOtp,
+  expireCatalogueLink,
+  logoutFromShop,
+};

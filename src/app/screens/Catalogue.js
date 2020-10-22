@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useTheme } from "@react-navigation/native";
 import { useStore } from "../config/Store";
 import { useDeviceOrientation, useDimensions } from "@react-native-community/hooks";
@@ -16,6 +16,7 @@ export default function Catalogue() {
   const dimensions = useDimensions();
   const orientation = useDeviceOrientation();
   const { colors, dark } = useTheme();
+  const overlay = useRef(true);
 
   const phoneColumns = isPhone && orientation.portrait ? 2 : 3;
   const tabColumns = isTablet && orientation.portrait ? 3 : 4;
@@ -29,6 +30,7 @@ export default function Catalogue() {
     getProductsFromShop()
       .then((data) => {
         dispatch({ type: "SET_PRODUCTS", payload: data });
+        overlay.current = !overlay.current;
       })
       .catch((error) => {
         console.log("response error", error);
@@ -37,25 +39,27 @@ export default function Catalogue() {
 
   useEffect(() => {
     refresh ? updateRefresh(false) : updateRefresh(true);
-    if (state.data.products.length != 0) {
-      console.log("data indicating is", state.indicators.isDataUpdating);
-      dispatch({ type: "SET_DATA_FLAG", payload: false });
+    if (state.data.products.length != 0 && state.indicators.dataRefreshed) {
+      dispatch({ type: "SET_DATA_REFRESH", payload: false });
+      overlay.current = false;
     }
   }, [state.data.products]);
 
   useEffect(() => {
     console.log("state after sort updated", state.indicators.isSortByGroup);
     if (state.indicators.isSortByGroup) {
+      overlay.current ? (overlay.current = true) : (overlay.current = true);
       SortBy("group");
     } else {
       console.log("sku logic executed");
+      overlay.current ? (overlay.current = true) : (overlay.current = true);
       SortBy("item");
     }
   }, [state.indicators.isSortByGroup]);
 
   useEffect(() => {
     console.log("sorted data is", sorted);
-    dispatch({ type: "SET_DATA_FLAG", payload: true });
+    dispatch({ type: "SET_DATA_REFRESH", payload: true });
     dispatch({ type: "UPDATE_PRODUCTS", payload: sorted });
   }, [sorted]);
 
@@ -70,7 +74,9 @@ export default function Catalogue() {
           columnWrapperStyle={styles.columns}
           data={state.data.products}
           extraData={refresh}
-          keyExtractor={(item) => (state.indicators.isSortByGroup ? item.designNumber : item.skuNumber)}
+          keyExtractor={(item) =>
+            state.indicators.isSortByGroup ? item.designNumber : item.skuNumber
+          }
           renderItem={({ item }) =>
             state.indicators.isSortByGroup ? (
               <GroupCatalogueItem design={item} />
@@ -81,8 +87,10 @@ export default function Catalogue() {
         />
 
         {/**Show Loading OverLay if array is still updating */}
-        {state.indicators.isDataUpdating == true ? (
-          <View style={{ width: "100%", height: "100%", flex: 1, position: "absolute" }}>
+        {overlay.current ? (
+          <View
+            ref={overlay}
+            style={{ width: "100%", height: "100%", flex: 1, position: "absolute" }}>
             <View
               style={{
                 flex: 1,

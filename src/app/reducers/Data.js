@@ -12,6 +12,8 @@ const dataReducer = (state, action) => {
       return { ...state, catalogue: action.payload, products: action.payload };
     case "UPDATE_PRODUCTS":
       return { ...state, products: action.payload };
+    case "UPDATE_LINKS":
+      return { ...state, links: action.payload };
     default:
       return state;
   }
