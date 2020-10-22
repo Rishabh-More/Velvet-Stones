@@ -1,7 +1,4 @@
-import {
-  DarkTheme as PaperDarkTheme,
-  DefaultTheme as PaperDefaultTheme,
-} from "react-native-paper";
+import { DarkTheme as PaperDarkTheme, DefaultTheme as PaperDefaultTheme } from "react-native-paper";
 
 const AppDefaultTheme = {
   name: "Light Theme",
@@ -18,6 +15,7 @@ const AppDefaultTheme = {
     card: "rgb(255, 255, 255)",
     modal: "rgb(245,245,240)",
     text: "rgb(28, 28, 30)",
+    textSubtle: "rgb(87, 87, 87)",
     textInverse: "rgb(255, 255, 255)",
     border: "rgb(224, 224, 224)",
     notification: "rgb(255, 69, 58)",
@@ -39,6 +37,7 @@ const AppDarkTheme = {
     card: "rgb(30, 30, 30)",
     modal: "rgb(55, 55, 55)",
     text: "rgb(225, 225, 225)",
+    textSubtle: "rgb(245,245,245)",
     textInverse: "rgb(28, 28, 30)",
     border: "rgb(87, 87, 87)",
     notification: "rgb(255, 69, 58)",

@@ -63,6 +63,19 @@ export default function Catalogue() {
     dispatch({ type: "UPDATE_PRODUCTS", payload: sorted });
   }, [sorted]);
 
+  // function FormatData(data, columns) {
+  //   //find how many number of full rows are there
+  //   const numberOfFullRows = Math.floor(data.length / columns);
+  //   //Number of Elements existing in the last row
+  //   let numberOfElementsLastRow = data.length - numberOfFullRows * columns;
+  //   while (numberOfElementsLastRow !== columns && numberOfElementsLastRow !== 0) {
+  //     data.push({ key: `blank-${numberOfElementsLastRow}`, empty: true });
+  //     numberOfElementsLastRow = numberOfElementsLastRow + 1;
+  //   }
+
+  //   return data;
+  // }
+
   return (
     <SafeAreaView style={styles.container}>
       <CatalogueCustomHeader />
@@ -77,13 +90,16 @@ export default function Catalogue() {
           keyExtractor={(item) =>
             state.indicators.isSortByGroup ? item.designNumber : item.skuNumber
           }
-          renderItem={({ item }) =>
-            state.indicators.isSortByGroup ? (
+          renderItem={({ item }) => {
+            if (item.empty == true) {
+              return <View style={styles.hiddenItem} />;
+            }
+            return state.indicators.isSortByGroup ? (
               <GroupCatalogueItem design={item} />
             ) : (
               <SingleCatalogueItem product={item} />
-            )
-          }
+            );
+          }}
         />
 
         {/**Show Loading OverLay if array is still updating */}
@@ -144,5 +160,8 @@ const styles = StyleSheet.create({
   columns: {
     flexWrap: "wrap",
     justifyContent: "space-between",
+  },
+  hiddenItem: {
+    backgroundColor: "transparent",
   },
 });

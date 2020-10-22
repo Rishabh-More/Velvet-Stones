@@ -7,6 +7,7 @@ import { View, Text, StyleSheet, Share, Alert } from "react-native";
 import { Card, Title, Portal, Dialog } from "react-native-paper";
 import { Button } from "react-native-elements";
 import { Fold } from "react-native-animated-spinkit";
+import Toast from "react-native-simple-toast";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
 const CatalogueLinkItem = ({ link }) => {
@@ -15,11 +16,35 @@ const CatalogueLinkItem = ({ link }) => {
 
   //State Code
   const [shareDialog, setShareDialog] = useState(false);
+  const [generating, setGenerating] = useState(false);
   const { state, dispatch } = useStore();
 
   useEffect(() => {
     console.log("links array is", state.data.links);
   }, [state.data.links]);
+
+  async function generateNewOtp() {
+    try {
+      setGenerating(true);
+      let otp = {
+        id: link.id,
+        otpCreatedAt: link.otpCreatedAt,
+        otpExpireAt: link.otpExpireAt,
+      };
+      await regenerateLinkOtp(otp)
+        .then((data) => {
+          console.log("otp regenerated", data[0]);
+          dispatch({ type: "UPDATE_LINKS_OTP", payload: data[0] });
+          setGenerating(false);
+          Toast.show("OTP Updated");
+        })
+        .catch((error) => {
+          console.log("response error", error);
+        });
+    } catch (error) {
+      console.log("error occured regenerate otp", error);
+    }
+  }
 
   function showConfirmationDialog() {
     Alert.alert("Expire Link", `Are you sure you want to delete the link: ${link.name}?`, [
@@ -121,9 +146,11 @@ const CatalogueLinkItem = ({ link }) => {
                   OTP: <Text style={{ color: colors.accent }}>{link.otp}</Text>
                 </Text>
                 <Button
+                  loading={generating}
                   buttonStyle={{ backgroundColor: colors.accent }}
-                  containerStyle={{ margin: 5, borderRadius: 10 }}
+                  containerStyle={{ width: 125, margin: 5, borderRadius: 10 }}
                   title="Regenerate OTP"
+                  onPress={() => generateNewOtp()}
                 />
               </View>
             ) : null}

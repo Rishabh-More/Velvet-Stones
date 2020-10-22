@@ -18,16 +18,27 @@ const GroupCatalogueItem = ({ design }) => {
     <Card
       style={[
         styles.container,
-        isPhone ? { aspectRatio: orientation.portrait ? 1 : 1 } : { aspectRatio: orientation.portrait ? 1.3 : 1.5 },
+        isPhone
+          ? { aspectRatio: orientation.portrait ? 1 : 1 }
+          : { aspectRatio: orientation.portrait ? 1.3 : 1.5 },
       ]}>
-      <Image style={[styles.image, { borderColor: colors.accent }]} source={{ uri: design.imageUrl }} />
+      <Image
+        style={[styles.image, { borderColor: colors.accent }]}
+        source={{ uri: design.imageUrl }}
+      />
       <View style={styles.info}>
         <View style={styles.textInfo}>
-          <Title style={{ color: colors.accent }}>{design.designNumber}</Title>
-          <Text style={{ fontSize: 18, fontWeight: "bold", color: colors.text }}>Quantity: {design.count}</Text>
+          <Title style={{ color: colors.textSubtle }}>{design.designNumber}</Title>
+          <Text style={{ fontSize: 16, fontWeight: "600", color: "grey" }}>
+            Quantity: {design.count}
+          </Text>
         </View>
         <View style={styles.button}>
-          <Button icon={<Icon name="cart-arrow-down" size={isPhone ? 30 : 40} color={colors.accent} />} type="clear" />
+          <Button
+            type="outline"
+            icon={<Icon name="cart-arrow-right" size={isPhone ? 30 : 40} color={colors.accent} />}
+            buttonStyle={{ borderColor: colors.accent, borderWidth: 0.5, borderRadius: 10 }}
+          />
         </View>
       </View>
     </Card>
@@ -47,7 +58,7 @@ const styles = StyleSheet.create({
     marginEnd: 5,
   },
   textInfo: {
-    flex: 1,
+    flex: 2,
     marginStart: 5,
     margin: 3,
   },
@@ -60,6 +71,7 @@ const styles = StyleSheet.create({
     borderWidth: 0.5,
   },
   button: {
+    flex: 1,
     justifyContent: "flex-end",
   },
 });
