@@ -5,6 +5,7 @@ import { useDeviceOrientation, useDimensions } from "@react-native-community/hoo
 import { isTablet, isPhone } from "react-native-device-detection";
 import { SafeAreaView, View, Text, StyleSheet, FlatList } from "react-native";
 import { CatalogueCustomHeader } from "../components/CatalogueCustomHeader";
+import { CatalogueCartFooter } from "../components/CatalogueCartFooter";
 import { BarIndicator } from "react-native-indicators";
 import { getProductsFromShop } from "../api/ApiService";
 import SingleCatalogueItem from "../components/pure components/SingleCatalogueItem";
@@ -23,7 +24,7 @@ export default function Catalogue() {
 
   //State Codes
   const { state, dispatch } = useStore();
-  const { sorted, SortBy } = useSortFilter();
+  const { SortBy } = useSortFilter();
   const [refresh, updateRefresh] = useState(false);
 
   useEffect(() => {
@@ -58,10 +59,10 @@ export default function Catalogue() {
   }, [state.indicators.isSortByGroup]);
 
   useEffect(() => {
-    console.log("sorted data is", sorted);
+    console.log("sorted data is", state.data.designs);
     dispatch({ type: "SET_DATA_REFRESH", payload: true });
-    dispatch({ type: "UPDATE_PRODUCTS", payload: sorted });
-  }, [sorted]);
+    dispatch({ type: "UPDATE_PRODUCTS", payload: state.data.designs });
+  }, [state.data.designs]);
 
   // function FormatData(data, columns) {
   //   //find how many number of full rows are there
@@ -77,9 +78,15 @@ export default function Catalogue() {
   // }
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.accentDark }]}>
       <CatalogueCustomHeader />
-      <View style={{ flex: 1 }}>
+      <View
+        style={{
+          flex: 1,
+          backgroundColor: colors.background,
+          borderBottomLeftRadius: state.data.cart.length != 0 ? 30 : 0,
+          borderBottomRightRadius: state.data.cart.length != 0 ? 30 : 0,
+        }}>
         <FlatList
           key={[orientation, refresh]}
           numColumns={isPhone ? phoneColumns : tabColumns}
@@ -106,7 +113,12 @@ export default function Catalogue() {
         {overlay.current ? (
           <View
             ref={overlay}
-            style={{ width: "100%", height: "100%", flex: 1, position: "absolute" }}>
+            style={{
+              width: "100%",
+              height: "100%",
+              flex: 1,
+              position: "absolute",
+            }}>
             <View
               style={{
                 flex: 1,
@@ -120,6 +132,8 @@ export default function Catalogue() {
                   position: "absolute",
                   opacity: dark ? 0.3 : 0.9,
                   backgroundColor: dark ? colors.accentDark : colors.primary,
+                  borderBottomLeftRadius: state.data.cart.length != 0 ? 30 : 0,
+                  borderBottomRightRadius: state.data.cart.length != 0 ? 30 : 0,
                   width: "100%",
                   height: "100%",
                   zIndex: 1,
@@ -141,6 +155,7 @@ export default function Catalogue() {
           </View>
         ) : null}
       </View>
+      {state.data.cart.length != 0 ? <CatalogueCartFooter /> : null}
     </SafeAreaView>
   );
 }

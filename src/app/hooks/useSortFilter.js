@@ -2,7 +2,6 @@ import { useState } from "react";
 import { useStore } from "../config/Store";
 
 export default function useSortFilter() {
-  const [sorted, setSorted] = useState([]);
   const { state, dispatch } = useStore();
 
   async function SortBy(sort) {
@@ -47,10 +46,10 @@ export default function useSortFilter() {
         return { designNumber: k, count: count[k][0], imageUrl: count[k][1] };
       });
     }
-    await setSorted(data);
+    await dispatch({ type: "UPDATE_DESIGNS", payload: data });
   }
 
   //Return whichever items you want to return from the hook.
   //These can be values, arrays and even functions as well
-  return { sorted, SortBy };
+  return { SortBy };
 }

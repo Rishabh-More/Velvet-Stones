@@ -4,24 +4,49 @@ import { useTheme, useNavigation } from "@react-navigation/native";
 import { View, Text, StyleSheet, StatusBar } from "react-native";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { Searchbar } from "react-native-paper";
-import SwitchSelector from "react-native-switch-selector";
 import { ButtonGroup } from "react-native-elements";
+import useSortFilter from "../hooks/useSortFilter";
 
 export function CatalogueCustomHeader() {
   const { colors, dark } = useTheme();
   const navigation = useNavigation();
   //console.log("nav props", navigation);
   const { state, dispatch } = useStore();
+  const { SortBy } = useSortFilter();
 
   const options = ["Sku", "Design"];
   const selected = state.indicators.isSortByGroup ? 1 : 0;
 
+  const SearchProducts = async (query) => {
+    let search = [];
+    if (!state.indicators.isSortByGroup) {
+      search = state.data.filter.length != 0 ? state.data.filter : state.data.catalogue;
+    } else {
+      search = state.data.designs;
+    }
+    const result = search.filter(function (item) {
+      let pattern = new RegExp(query, "i");
+      return state.indicators.isSortByGroup
+        ? item.designNumber.match(pattern)
+        : item.skuNumber.match(pattern);
+    });
+    await dispatch({ type: "SEARCH_PRODUCTS", payload: result });
+  };
+
   return (
     <View style={styles.parentContainer}>
-      <StatusBar barStyle={dark ? "light-content" : "dark-content"} backgroundColor={colors.statusBar} />
+      <StatusBar
+        barStyle={dark ? "light-content" : "dark-content"}
+        backgroundColor={colors.statusBar}
+      />
       <View style={{ backgroundColor: colors.primary }}>
         <View style={styles.headerTopContentWrapper}>
-          <Icon name="menu" size={30} color={colors.accent} onPress={() => navigation.openDrawer()} />
+          <Icon
+            name="menu"
+            size={30}
+            color={colors.accent}
+            onPress={() => navigation.openDrawer()}
+          />
           <View style={styles.titleViewWrapper}>
             <Text
               style={{
@@ -32,28 +57,6 @@ export function CatalogueCustomHeader() {
               Catalogue
             </Text>
           </View>
-          {/* <SwitchSelector
-            style={{
-              width: 125,
-              margin: 5,
-              borderRadius: 0,
-            }}
-            initial={0}
-            onPress={(value) => {
-              //onChangeGroup(value);
-              console.log("group value", value);
-            }}
-            textColor={colors.accent}
-            selectedColor="#fff"
-            buttonColor={colors.accent}
-            borderColor={colors.accent}
-            backgroundColor="transparent"
-            hasPadding
-            options={[
-              {label: "Sku ", value: "sku"},
-              {label: "Design ", value: "design"},
-            ]}
-          /> */}
           <ButtonGroup
             buttons={options}
             selectedIndex={selected}
@@ -75,7 +78,12 @@ export function CatalogueCustomHeader() {
               }
             }}
           />
-          <Icon name="filter-outline" size={30} color={colors.accent} onPress={() => navigation.navigate("filter")} />
+          <Icon
+            name="filter-outline"
+            size={30}
+            color={colors.accent}
+            onPress={() => navigation.navigate("filter")}
+          />
         </View>
         <View style={styles.headerBottomContentWrapper}>
           <Searchbar
@@ -86,7 +94,7 @@ export function CatalogueCustomHeader() {
               },
             ]}
             placeholder="Search Products"
-            onChangeText={() => console.log("searching..")}
+            onChangeText={(text) => SearchProducts(text)}
           />
         </View>
       </View>

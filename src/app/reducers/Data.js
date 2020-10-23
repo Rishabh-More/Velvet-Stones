@@ -1,6 +1,7 @@
 const initialData = {
   catalogue: [],
   products: [],
+  designs: [],
   filter: [],
   cart: [],
   links: [],
@@ -12,6 +13,22 @@ const dataReducer = (state, action) => {
       return { ...state, catalogue: action.payload, products: action.payload };
     case "UPDATE_PRODUCTS":
       return { ...state, products: action.payload };
+    case "SEARCH_PRODUCTS":
+      //State here only has initialData fields.
+      return { ...state, products: action.payload };
+    case "UPDATE_DESIGNS":
+      return { ...state, designs: action.payload };
+    case "ADD_TO_CART":
+      return { ...state, cart: [...state.cart, action.payload] };
+    case "ADD_ALL_TO_CART":
+      return { ...state, cart: state.cart.concat(action.payload) };
+    case "DELETE_FROM_CART":
+      return {
+        ...state,
+        cart: [...state.cart.slice(0, action.payload), ...state.cart.slice(action.payload + 1)],
+      };
+    case "CLEAR_CART":
+      return { ...state, cart: [] };
     case "UPDATE_LINKS":
       return { ...state, links: action.payload };
     case "UPDATE_LINKS_OTP":

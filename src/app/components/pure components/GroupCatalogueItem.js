@@ -2,6 +2,7 @@ import React from "react";
 import { isPhone } from "react-native-device-detection";
 import { useDeviceOrientation } from "@react-native-community/hooks";
 import { useTheme } from "@react-navigation/native";
+import { useStore } from "../../config/Store";
 import { View, Text, StyleSheet, Image } from "react-native";
 import { Card, Title } from "react-native-paper";
 import { Button } from "react-native-elements";
@@ -13,6 +14,26 @@ const phoneThumbImageHeight = "65%";
 const GroupCatalogueItem = ({ design }) => {
   const orientation = useDeviceOrientation();
   const { colors, dark } = useTheme();
+
+  //State Code
+  const { state, dispatch } = useStore();
+
+  async function AddAllProductsToCart() {
+    //Step 1: We need to include filter as well as
+    //Our Products for a particular design will change based on filter
+    let data = [];
+    //Step 2: So we fetch data from our filter[] and not our products[] from the store
+    if (state.data.filter.length != 0) {
+      //If filter is not empty, then we use filter[]
+      data = state.data.filter;
+    } else {
+      //We use all products i.e. catalogue[]
+      data = state.data.catalogue;
+    }
+    //Step 3: Now we need to collect only those items which belong to that design number from the filter[]
+    const result = await data.filter((item) => item.designNumber == design.designNumber);
+    await dispatch({ type: "ADD_ALL_TO_CART", payload: result });
+  }
 
   return (
     <Card
@@ -38,6 +59,7 @@ const GroupCatalogueItem = ({ design }) => {
             type="outline"
             icon={<Icon name="cart-arrow-right" size={isPhone ? 30 : 40} color={colors.accent} />}
             buttonStyle={{ borderColor: colors.accent, borderWidth: 0.5, borderRadius: 10 }}
+            onPress={() => AddAllProductsToCart()}
           />
         </View>
       </View>

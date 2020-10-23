@@ -2,6 +2,7 @@ import React from "react";
 import { isPhone } from "react-native-device-detection";
 import { useDeviceOrientation } from "@react-native-community/hooks";
 import { useTheme } from "@react-navigation/native";
+import { useStore } from "../../config/Store";
 import { View, Text, StyleSheet, Image } from "react-native";
 import { Card, Title } from "react-native-paper";
 import { Button } from "react-native-elements";
@@ -14,6 +15,14 @@ const phoneImageThumbHeight = "40%";
 const SingleCatalogueItem = ({ product }) => {
   const orientation = useDeviceOrientation();
   const { colors, dark } = useTheme();
+
+  //State Code
+  const { state, dispatch } = useStore();
+
+  async function AddProductToCart() {
+    await dispatch({ type: "ADD_TO_CART", payload: product });
+  }
+
   return (
     <Card
       style={[
@@ -69,10 +78,10 @@ const SingleCatalogueItem = ({ product }) => {
           <View style={styles.button}>
             <Button
               type="outline"
-              icon={<Icon name="plus" size={20} color={colors.accent} />}
+              icon={<Icon name="cart-outline" size={20} color={colors.accent} />}
               buttonStyle={{ borderColor: colors.accent }}
               containerStyle={{ margin: 5, marginBottom: 5, width: 50 }}
-              onPress={() => Toast.show("Added to Cart")}
+              onPress={() => AddProductToCart()}
             />
           </View>
         </View>
