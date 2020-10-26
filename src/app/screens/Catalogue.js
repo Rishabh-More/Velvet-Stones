@@ -47,6 +47,18 @@ export default function Catalogue() {
   }, [state.data.products]);
 
   useEffect(() => {
+    console.log("filter upodated", state.data.filter);
+    if (state.data.filter.length !== 0) {
+      //Update the products
+      dispatch({ type: "UPDATE_PRODUCTS", payload: state.data.filter });
+    } else {
+      //Original Data
+      dispatch({ type: "UPDATE_PRODUCTS", payload: state.data.catalogue });
+    }
+    refresh ? updateRefresh(false) : updateRefresh(true);
+  }, [state.data.filter]);
+
+  useEffect(() => {
     console.log("state after sort updated", state.indicators.isSortByGroup);
     if (state.indicators.isSortByGroup) {
       overlay.current ? (overlay.current = true) : (overlay.current = true);
@@ -63,6 +75,10 @@ export default function Catalogue() {
     dispatch({ type: "SET_DATA_REFRESH", payload: true });
     dispatch({ type: "UPDATE_PRODUCTS", payload: state.data.designs });
   }, [state.data.designs]);
+
+  useEffect(() => {
+    console.log("orientation changed", orientation);
+  }, [orientation]);
 
   // function FormatData(data, columns) {
   //   //find how many number of full rows are there
@@ -88,7 +104,7 @@ export default function Catalogue() {
           borderBottomRightRadius: state.data.cart.length != 0 ? 30 : 0,
         }}>
         <FlatList
-          key={[orientation, refresh]}
+          key={orientation}
           numColumns={isPhone ? phoneColumns : tabColumns}
           style={styles.flatlist}
           columnWrapperStyle={styles.columns}

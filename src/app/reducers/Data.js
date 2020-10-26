@@ -18,6 +18,10 @@ const dataReducer = (state, action) => {
       return { ...state, products: action.payload };
     case "UPDATE_DESIGNS":
       return { ...state, designs: action.payload };
+    case "UPDATE_FILTER":
+      return { ...state, filter: action.payload };
+    case "CLEAR_FILTER":
+      return { ...state, filter: [] };
     case "ADD_TO_CART":
       return { ...state, cart: [...state.cart, action.payload] };
     case "ADD_ALL_TO_CART":

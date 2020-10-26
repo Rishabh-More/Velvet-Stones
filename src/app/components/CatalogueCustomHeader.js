@@ -57,7 +57,7 @@ export function CatalogueCustomHeader() {
               Catalogue
             </Text>
           </View>
-          <ButtonGroup
+          {/* <ButtonGroup
             buttons={options}
             selectedIndex={selected}
             containerStyle={{
@@ -77,7 +77,7 @@ export function CatalogueCustomHeader() {
                 dispatch({ type: "SET_SORT_FLAG", payload: true });
               }
             }}
-          />
+          /> */}
           <Icon
             name="filter-outline"
             size={30}
