@@ -1,16 +1,17 @@
-import React from "react";
+import React, { useState } from "react";
 import { isPhone } from "react-native-device-detection";
 import { useDeviceOrientation } from "@react-native-community/hooks";
 import { useTheme } from "@react-navigation/native";
 import { useStore } from "../../config/Store";
-import { View, Text, StyleSheet, Image } from "react-native";
+import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
 import { Card, Title } from "react-native-paper";
 import { Button } from "react-native-elements";
+import ImageView from "react-native-image-viewing";
 import Toast from "react-native-simple-toast";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
 const tabImageThumbHeight = "60%";
-const phoneImageThumbHeight = "40%";
+const phoneImageThumbHeight = "55%";
 
 const SingleCatalogueItem = ({ product }) => {
   const orientation = useDeviceOrientation();
@@ -18,6 +19,7 @@ const SingleCatalogueItem = ({ product }) => {
 
   //State Code
   const { state, dispatch } = useStore();
+  const [visible, setIsVisible] = useState(false);
 
   async function AddProductToCart() {
     await dispatch({ type: "ADD_TO_CART", payload: product });
@@ -28,44 +30,69 @@ const SingleCatalogueItem = ({ product }) => {
       style={[
         styles.container,
         isPhone
-          ? { aspectRatio: orientation.portrait ? 0.9 : 1 }
+          ? { aspectRatio: orientation.portrait ? 1 : 1 }
           : { aspectRatio: orientation.portrait ? 0.9 : 0.95 },
       ]}>
-      <Image
-        style={styles.image}
-        source={
-          product.imageUrl == ""
-            ? require("../../res/assets/broken-image.png")
-            : { uri: product.imageUrl }
-        }
-      />
+      <TouchableOpacity style={{ flex: 2 }} onPress={() => setIsVisible(true)}>
+        <Image
+          style={styles.image}
+          source={
+            product.imageUrl == ""
+              ? require("../../res/assets/broken-image.png")
+              : { uri: product.imageUrl }
+          }
+        />
+        <ImageView
+          images={[{ uri: product.imageUrl }]}
+          imageIndex={0}
+          visible={visible}
+          backgroundColor={colors.background}
+          onRequestClose={() => setIsVisible(false)}
+        />
+      </TouchableOpacity>
       <Title style={[styles.title, { color: colors.accent }]}>{product.skuNumber}</Title>
       <View style={styles.content}>
-        <View>
-          <Text style={[styles.text, { color: colors.textSubtle }]}>
-            <Text style={{ fontWeight: "bold", color: colors.textSubtle }}>Design No: </Text>
-            {product.designNumber}
-          </Text>
+        {/* <View>
           <Text style={[styles.text, { color: colors.textSubtle }]}>
             <Text style={{ fontWeight: "bold", color: colors.textSubtle }}>Item Category: </Text>
             {product.itemCategory}
           </Text>
-        </View>
+        </View> */}
         <View style={styles.info}>
           <View style={{ flex: 1 }}>
-            <Text style={[styles.text, { color: colors.textSubtle }]}>
-              <Text style={{ fontWeight: "bold" }}>Item Type: </Text>
-              {product.itemType}
-            </Text>
-            <Text style={[styles.text, { color: colors.textSubtle }]}>
-              <Text style={{ fontWeight: "bold" }}>Gross Wt: </Text>
-              {product.grossWeight}
-            </Text>
-            <Text style={[styles.text, { color: colors.textSubtle }]}>
-              <Text style={{ fontWeight: "bold" }}>Net Wt: </Text>
-              {product.netWeight}
-            </Text>
-            <Text style={{ marginLeft: 5, fontWeight: "bold", color: colors.textSubtle }}>
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "space-evenly",
+              }}>
+              <Text style={[styles.text, { flex: 1, color: colors.textSubtle }]}>
+                <Text style={{ fontWeight: "bold" }}>G Wt: </Text>
+                {product.grossWeight}
+              </Text>
+              <Text style={[styles.text, { flex: 1, color: colors.textSubtle }]}>
+                <Text style={{ fontWeight: "bold" }}>{product.metalPurity} Kt</Text>
+              </Text>
+            </View>
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "space-evenly",
+              }}>
+              <Text style={[styles.text, { flex: 1, color: colors.textSubtle }]}>
+                <Text style={{ fontWeight: "bold" }}>N Wt: </Text>
+                {product.netWeight}
+              </Text>
+              <Text style={[styles.text, { flex: 1, color: colors.textSubtle }]}>
+                <Text style={{ fontWeight: "bold" }}>{product.metalType}</Text>
+              </Text>
+            </View>
+            {product.totalDiamondWeight != "" ? (
+              <Text style={[styles.text, { color: colors.textSubtle }]}>
+                <Text style={{ fontWeight: "bold", color: colors.textSubtle }}>D Wt: </Text>
+                {product.totalDiamondWeight} Cts
+              </Text>
+            ) : null}
+            {/* <Text style={{ marginLeft: 5, fontWeight: "bold", color: colors.textSubtle }}>
               Item Status:{" "}
               <Text
                 style={{
@@ -73,7 +100,7 @@ const SingleCatalogueItem = ({ product }) => {
                 }}>
                 {product.itemStatus}
               </Text>
-            </Text>
+            </Text> */}
           </View>
           <View style={styles.button}>
             <Button
@@ -110,13 +137,15 @@ const styles = StyleSheet.create({
     marginEnd: 10,
   },
   text: {
+    //flex: 1,
     marginLeft: 5,
   },
   image: {
     margin: 3,
+    marginBottom: 5,
     borderRadius: 10,
     maxWidth: "100%",
-    height: isPhone ? phoneImageThumbHeight : tabImageThumbHeight,
+    height: "100%", //isPhone ? phoneImageThumbHeight : tabImageThumbHeight,
     resizeMode: "cover",
   },
   button: {

@@ -4,6 +4,7 @@ const initialIndicators = {
   linksRefreshed: false,
   isSortByGroup: false,
   isFilterApplied: false,
+  requestedFeature: "",
 };
 
 const indicatorReducer = (state, action) => {
@@ -18,6 +19,8 @@ const indicatorReducer = (state, action) => {
       return { ...state, dataRefreshed: action.payload };
     case "SET_LINKS_REFRESH":
       return { ...state, linksRefreshed: action.payload };
+    case "SERVE_FEATURE_REQUEST":
+      return { ...state, requestedFeature: action.payload };
     default:
       return state;
   }

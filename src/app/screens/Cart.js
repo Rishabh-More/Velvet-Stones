@@ -1,9 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useTheme, useNavigation } from "@react-navigation/native";
-import {
-  useDeviceOrientation,
-  useDimensions,
-} from "@react-native-community/hooks";
+import { useDeviceOrientation, useDimensions } from "@react-native-community/hooks";
 import { isTablet, isPhone } from "react-native-device-detection";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { SafeAreaView, View, Text, StyleSheet } from "react-native";
@@ -30,14 +27,7 @@ export default function Cart() {
       </View>
       <View style={{ flexDirection: "row" }}>
         <Button
-          icon={
-            <Icon
-              name="tag-heart"
-              size={20}
-              color={colors.accent}
-              style={{ marginEnd: 3 }}
-            />
-          }
+          icon={<Icon name="tag-heart" size={20} color={colors.accent} style={{ marginEnd: 3 }} />}
           titleStyle={{ color: colors.accent }}
           buttonStyle={{
             borderColor: colors.accent,
@@ -50,6 +40,7 @@ export default function Cart() {
           containerStyle={{ flex: 1 }}
           type="outline"
           title="Generate Order"
+          onPress={() => navigation.navigate("success")}
         />
         <Button
           icon={
@@ -71,6 +62,7 @@ export default function Cart() {
           }}
           containerStyle={{ flex: 1 }}
           title="Generate Link"
+          onPress={() => navigation.navigate("customers")}
         />
       </View>
     </SafeAreaView>

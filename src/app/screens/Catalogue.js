@@ -30,6 +30,7 @@ export default function Catalogue() {
   useEffect(() => {
     getProductsFromShop()
       .then((data) => {
+        console.log("api response", data);
         dispatch({ type: "SET_PRODUCTS", payload: data });
         overlay.current = !overlay.current;
       })

@@ -1,0 +1,27 @@
+import React from "react";
+import { createStackNavigator, CardStyleInterpolators } from "@react-navigation/stack";
+
+import Cart from "../screens/Cart";
+import Customers from "../screens/Customers";
+import Success from "../screens/Success";
+
+const CartStack = createStackNavigator();
+
+const CartStacks = () => (
+  <CartStack.Navigator
+    screenOptions={{ cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS }}>
+    <CartStack.Screen name="cart" component={Cart} options={{ headerShown: false }} />
+    <CartStack.Screen
+      name="customers"
+      component={Customers}
+      options={{ headerTitle: "Customer Details" }}
+    />
+    <CartStack.Screen
+      name="success"
+      component={Success}
+      options={{ headerTitle: "Generated Successfully" }}
+    />
+  </CartStack.Navigator>
+);
+
+export default CartStacks;
