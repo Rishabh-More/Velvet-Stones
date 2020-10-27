@@ -1,16 +1,21 @@
 import React, { useState, useEffect } from "react";
 import { useTheme, useNavigation } from "@react-navigation/native";
 import { useDeviceOrientation, useDimensions } from "@react-native-community/hooks";
+import { useStore } from "../config/Store";
 import { isTablet, isPhone } from "react-native-device-detection";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
-import { SafeAreaView, View, Text, StyleSheet } from "react-native";
+import { SafeAreaView, View, Text, StyleSheet, FlatList } from "react-native";
 import { Appbar } from "react-native-paper";
 import { Button } from "react-native-elements";
+import CartOrderItem from "../components/pure components/CartOrderItem";
 
 export default function Cart() {
   const { colors, dark } = useTheme();
   const navigation = useNavigation();
   const dimensions = useDimensions();
+
+  const { state, dispatch } = useStore();
+
   return (
     <SafeAreaView style={styles.container}>
       <Appbar style={{ width: "100%" }}>
@@ -23,7 +28,29 @@ export default function Cart() {
         <Appbar.Content title="Cart" titleStyle={{ fontSize: 16 }} />
       </Appbar>
       <View style={{ flex: 1 }}>
-        <Text>This is Cart Screen</Text>
+        <FlatList
+          style={styles.flatlist}
+          data={state.data.cart}
+          keyExtractor={(item) => item.skuNumber}
+          renderItem={({ item }) => <CartOrderItem cart={item} />}
+          contentContainerStyle={
+            state.data.cart.length == 0 ? { flexGrow: 1, justifyContent: "center" } : {}
+          }
+          ListEmptyComponent={
+            state.data.cart.length == 0 ? (
+              <View style={{ alignItems: "center" }}>
+                <Text style={{ color: "grey" }}>You currently have no items in your Cart</Text>
+                <Text style={{ fontSize: 16 }}>Add items from Catalogue to show Here</Text>
+                <Button
+                  type="clear"
+                  title="Products Catalogue"
+                  titleStyle={{ color: colors.accent }}
+                  onPress={() => navigation.navigate("catalogue")}
+                />
+              </View>
+            ) : null
+          }
+        />
       </View>
       <View style={{ flexDirection: "row" }}>
         <Button
@@ -72,6 +99,9 @@ export default function Cart() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: "center",
+  },
+  flatlist: {
+    flex: 1,
+    marginBottom: 15,
   },
 });
