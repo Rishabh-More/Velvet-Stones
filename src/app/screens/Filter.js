@@ -164,7 +164,7 @@ export default function Filter() {
           <View style={{ marginStart: 15, marginEnd: 15, marginTop: 10 }}>
             <Title>Item Status</Title>
             <SectionedMultiSelect
-              colors={{ primary: colors.primary, chipColor: colors.accent }}
+              colors={{ primary: colors.accent, chipColor: colors.accent }}
               items={[
                 {
                   name: "Item Status",
@@ -182,14 +182,13 @@ export default function Filter() {
               showDropDowns={false}
               onSelectedItemsChange={(value) => updateQuery({ ...query, itemStatus: value })}
               selectedItems={query.itemStatus}
-              showCancelButton={true}
               showRemoveAll={true}
             />
           </View>
           <View style={{ marginStart: 15, marginEnd: 15 }}>
             <Title>Item Category</Title>
             <SectionedMultiSelect
-              colors={{ primary: colors.primary, chipColor: colors.accent }}
+              colors={{ primary: colors.accent, chipColor: colors.accent }}
               items={[
                 {
                   name: "Item Category",
@@ -211,7 +210,6 @@ export default function Filter() {
               showDropDowns={false}
               onSelectedItemsChange={(value) => updateQuery({ ...query, itemCategory: value })}
               selectedItems={query.itemCategory}
-              showCancelButton={true}
               showRemoveAll={true}
             />
           </View>

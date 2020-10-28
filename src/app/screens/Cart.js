@@ -54,7 +54,14 @@ export default function Cart() {
       </View>
       <View style={{ flexDirection: "row" }}>
         <Button
-          icon={<Icon name="tag-heart" size={20} color={colors.accent} style={{ marginEnd: 3 }} />}
+          icon={
+            <Icon
+              name="delete-sweep-outline"
+              size={20}
+              color={colors.accent}
+              style={{ marginEnd: 3 }}
+            />
+          }
           titleStyle={{ color: colors.accent }}
           buttonStyle={{
             borderColor: colors.accent,
@@ -66,18 +73,13 @@ export default function Cart() {
           }}
           containerStyle={{ flex: 1 }}
           type="outline"
-          title="Generate Order"
-          onPress={() => navigation.navigate("success")}
+          title="Clear Cart"
+          onPress={() => dispatch({ type: "CLEAR_CART" })}
         />
         <Button
-          icon={
-            <Icon
-              name="link-variant"
-              size={20}
-              color={colors.textInverse}
-              style={{ marginEnd: 3 }}
-            />
-          }
+          // icon={
+          //   <Icon name="tag-heart" size={20} color={colors.textInverse} style={{ marginEnd: 3 }} />
+          // }
           titleStyle={{ color: colors.textInverse }}
           buttonStyle={{
             backgroundColor: colors.accent,
@@ -88,7 +90,7 @@ export default function Cart() {
             borderRadius: 10,
           }}
           containerStyle={{ flex: 1 }}
-          title="Generate Link"
+          title="Checkout"
           onPress={() => navigation.navigate("customers")}
         />
       </View>

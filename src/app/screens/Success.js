@@ -1,5 +1,6 @@
-import React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import React, { useCallback, useEffect } from "react";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import { View, Text, StyleSheet, BackHandler } from "react-native";
 
 export default function Success() {
   return (

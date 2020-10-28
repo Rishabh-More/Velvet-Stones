@@ -1,5 +1,9 @@
 import React from "react";
-import { createStackNavigator, CardStyleInterpolators } from "@react-navigation/stack";
+import {
+  createStackNavigator,
+  CardStyleInterpolators,
+  HeaderBackButton,
+} from "@react-navigation/stack";
 
 import Cart from "../screens/Cart";
 import Customers from "../screens/Customers";
@@ -19,7 +23,10 @@ const CartStacks = () => (
     <CartStack.Screen
       name="success"
       component={Success}
-      options={{ headerTitle: "Generated Successfully" }}
+      options={({ navigation }) => ({
+        headerTitle: "Generated Successfully",
+        headerLeft: () => <HeaderBackButton onPress={() => navigation.navigate("cart")} />,
+      })}
     />
   </CartStack.Navigator>
 );

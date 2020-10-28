@@ -1,14 +1,30 @@
 import React from "react";
 import { useTheme } from "@react-navigation/native";
+import { useStore } from "../../config/Store";
 import { View, Text, StyleSheet, Image } from "react-native";
 import { Card, Title, TextInput } from "react-native-paper";
 import { Button } from "react-native-elements";
 import Counter from "react-native-counters";
 import DropDownPicker from "react-native-dropdown-picker";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import Toast from "react-native-simple-toast";
 
 const CartOrderItem = ({ cart }) => {
   const { colors, dark } = useTheme();
+
+  //State Codes
+  const { state, dispatch } = useStore();
+
+  async function removeFromCart() {
+    try {
+      const index = state.data.cart.map((item) => item.skuNumber).indexOf(cart.skuNumber);
+      console.log("index is", index);
+      await dispatch({ type: "DELETE_FROM_CART", payload: index });
+      Toast.show(`Removed item ${cart.skuNumber}`);
+    } catch (error) {
+      console.log("couldn't remove from cart", error);
+    }
+  }
   return (
     <Card style={styles.container}>
       <View style={{ flex: 1, flexDirection: "row" }}>
@@ -25,7 +41,6 @@ const CartOrderItem = ({ cart }) => {
                 maxWidth: "100%",
                 aspectRatio: 1,
                 resizeMode: "cover",
-                backgroundColor: "red",
               }}
               source={
                 cart.imageUrl == ""
@@ -35,7 +50,7 @@ const CartOrderItem = ({ cart }) => {
             />
           </View>
           <View style={{ alignSelf: "center" }}>
-            <Title>{cart.skuNumber}</Title>
+            <Title style={{ color: colors.accent }}>{cart.skuNumber}</Title>
           </View>
         </View>
         <View style={{ flex: 3 }}>
@@ -114,6 +129,7 @@ const CartOrderItem = ({ cart }) => {
                 borderRadius: 5,
                 borderWidth: 0.5,
               }}
+              onPress={() => removeFromCart()}
             />
           </View>
         </View>
