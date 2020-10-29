@@ -7,6 +7,7 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { SafeAreaView, View, Text, StyleSheet, FlatList } from "react-native";
 import { Appbar } from "react-native-paper";
 import { Button } from "react-native-elements";
+import Toast from "react-native-simple-toast";
 import CartOrderItem from "../components/pure components/CartOrderItem";
 
 export default function Cart() {
@@ -40,7 +41,9 @@ export default function Cart() {
             state.data.cart.length == 0 ? (
               <View style={{ alignItems: "center" }}>
                 <Text style={{ color: "grey" }}>You currently have no items in your Cart</Text>
-                <Text style={{ fontSize: 16 }}>Add items from Catalogue to show Here</Text>
+                <Text style={{ color: colors.text, fontSize: 16 }}>
+                  Add items from Catalogue to show Here
+                </Text>
                 <Button
                   type="clear"
                   title="Products Catalogue"
@@ -74,7 +77,11 @@ export default function Cart() {
           containerStyle={{ flex: 1 }}
           type="outline"
           title="Clear Cart"
-          onPress={() => dispatch({ type: "CLEAR_CART" })}
+          onPress={() =>
+            state.data.cart.length != 0
+              ? dispatch({ type: "CLEAR_CART" })
+              : Toast.show("No Items to clear")
+          }
         />
         <Button
           // icon={

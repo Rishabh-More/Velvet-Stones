@@ -14,8 +14,7 @@ const FETCH_PRODUCTS = "products/115";
 const GET_CUSTOMERS = "customers";
 const POST_CUSTOMERS = "customer";
 
-const POST_ORDER = "order";
-const POST_ORDER_DATA = "orderproducts";
+const POST_ORDER = "orderClient";
 
 const GENERATE_LINK = "catalogue/generate";
 const GET_CATALOGUE_LINKS = "catalogue";
@@ -95,10 +94,10 @@ function getProductsFromShop() {
   }
 }
 
-function generateOrder(order) {
+function getCustomersForShop(shopId) {
   try {
     return new Promise(async function (resolve, reject) {
-      const response = await service.post(POST_ORDER, order, {
+      const response = await service.get(`${GET_CUSTOMERS}/${shopId}`, {
         headers: {
           Authorization: AUTH_TOKEN,
         },
@@ -114,10 +113,29 @@ function generateOrder(order) {
   }
 }
 
-function uploadProductsToOrder(orderId, products) {
+function addCustomerToShop(customer) {
   try {
     return new Promise(async function (resolve, reject) {
-      const response = await service.post(`${POST_ORDER_DATA}/${orderId}`, products, {
+      const response = await service.post(POST_CUSTOMERS, customer, {
+        headers: {
+          Authorization: AUTH_TOKEN,
+        },
+      });
+      if (response.data.status) {
+        resolve(response.data.data);
+      } else {
+        reject(response.data.message);
+      }
+    });
+  } catch (error) {
+    console.log("request error", error.message);
+  }
+}
+
+function generateOrder(order) {
+  try {
+    return new Promise(async function (resolve, reject) {
+      const response = await service.post(POST_ORDER, order, {
         headers: {
           Authorization: AUTH_TOKEN,
         },
@@ -255,8 +273,9 @@ export {
   generateLoginOTP,
   loginToShop,
   getProductsFromShop,
+  getCustomersForShop,
+  addCustomerToShop,
   generateOrder,
-  uploadProductsToOrder,
   getCatalogueLinks,
   generateCatalogueLink,
   regenerateLinkOtp,
