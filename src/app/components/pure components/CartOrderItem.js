@@ -1,12 +1,14 @@
-import React from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useTheme } from "@react-navigation/native";
 import { useStore } from "../../config/Store";
+import { usePrevious } from "../../hooks/usePrevious";
 import { View, Text, StyleSheet, Image } from "react-native";
 import { Card, Title, TextInput } from "react-native-paper";
 import { Button } from "react-native-elements";
 import Counter from "react-native-counters";
-import DropDownPicker from "react-native-dropdown-picker";
-import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import MaterialIcons from "react-native-vector-icons/MaterialIcons";
+import SectionedMultiSelect from "react-native-sectioned-multi-select";
+import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import Toast from "react-native-simple-toast";
 
 const CartOrderItem = ({ cart }) => {
@@ -14,6 +16,17 @@ const CartOrderItem = ({ cart }) => {
 
   //State Codes
   const { state, dispatch } = useStore();
+  const [updated, setUpdated] = useState(false);
+  const [props, setProps] = useState({
+    skuNumber: cart.skuNumber,
+    metalPurity: cart.metalPurity,
+    metalType: cart.metalType,
+    orderProductRemarks: "",
+    orderProductQuantity: 0,
+  });
+  const prevObject = usePrevious(props);
+  console.log("initial props object", props);
+  console.log("previous object", prevObject);
 
   async function removeFromCart() {
     try {
@@ -33,13 +46,18 @@ const CartOrderItem = ({ cart }) => {
             flex: 1.5,
           }}>
           <View
-            style={{ margin: 5, borderRadius: 10, borderWidth: 0.5, borderColor: colors.accent }}>
+            style={{
+              margin: 5,
+              borderRadius: 10,
+              borderWidth: 0.5,
+              borderColor: colors.accent,
+            }}>
             <Image
               style={{
                 flex: 1,
                 borderRadius: 10,
                 maxWidth: "100%",
-                aspectRatio: 1,
+                aspectRatio: 0.85,
                 resizeMode: "cover",
               }}
               source={
@@ -49,79 +67,136 @@ const CartOrderItem = ({ cart }) => {
               }
             />
           </View>
-          <View style={{ alignSelf: "center" }}>
-            <Title style={{ color: colors.accent }}>{cart.skuNumber}</Title>
-          </View>
         </View>
         <View style={{ flex: 3 }}>
-          <View style={{ flexDirection: "row", zIndex: 1 }}>
-            <DropDownPicker
-              disabled={false}
-              placeholder="Select Purity"
-              style={{ borderColor: colors.border, backgroundColor: colors.primary }}
-              labelStyle={{ color: colors.text }}
-              arrowColor={colors.text}
-              containerStyle={{ flex: 1, margin: 5 }}
-              dropDownStyle={{ backgroundColor: colors.primary, borderColor: colors.border }}
-              items={[
-                { label: "14 Kt", value: "14KT" },
-                { label: "18 Kt", value: "18KT" },
-              ]}
-            />
-            <DropDownPicker
-              disabled={false}
-              placeholder="Select Color"
-              style={{ borderColor: colors.border, backgroundColor: colors.primary }}
-              labelStyle={{ color: colors.text }}
-              arrowColor={colors.text}
-              containerStyle={{ flex: 1, margin: 5 }}
-              dropDownStyle={{ backgroundColor: colors.primary, borderColor: colors.border }}
-              items={[
-                { label: "Yg", value: "Yg" },
-                { label: "Wg", value: "Wg" },
-                { label: "Pg", value: "Pg" },
-                { label: "Yw", value: "Yw" },
-                { label: "Pw", value: "Pw" },
-                { label: "Gw", value: "Gw" },
-                { label: "Pa", value: "Pa" },
-              ]}
-            />
+          <View style={{ flexDirection: "row", alignItems: "flex-end", margin: 5 }}>
+            {/* <Title style={{ color: colors.accent }}>{cart.skuNumber}</Title> */}
+            <Text style={{ margin: 5 }}>Design Number: </Text>
+            <Title style={{ color: colors.accent }}>{cart.designNumber}</Title>
           </View>
-          <View style={{ margin: 5 }}>
+          <View style={{ flexDirection: "row", zIndex: 5 }}>
+            <View
+              style={{
+                flex: 1,
+                height: 50,
+                justifyContent: "center",
+                marginEnd: 10,
+                marginTop: 5,
+                marginStart: 5,
+                marginBottom: 5,
+                borderRadius: 5,
+                borderColor: colors.border,
+                borderWidth: 1,
+              }}>
+              <SectionedMultiSelect
+                single={true}
+                disabled={state.indicators.requestedFeature != "order" ? true : false}
+                colors={{ primary: colors.accent }}
+                showDropDowns={false}
+                expandDropDowns={true}
+                items={[
+                  {
+                    name: "Purity",
+                    id: 0,
+                    purity: [
+                      { name: "14 Kt", id: "14.0" },
+                      { name: "18 Kt", id: "18.0" },
+                    ],
+                  },
+                ]}
+                selectedItems={[props.metalPurity]}
+                uniqueKey="id"
+                subKey="purity"
+                IconRenderer={MaterialIcons}
+                styles={{
+                  selectToggle: { marginStart: 10, marginEnd: 10 },
+                  container: {
+                    maxHeight: "30%",
+                    width: "80%",
+                    alignSelf: "center",
+                    borderRadius: 15,
+                  },
+                  modalWrapper: { justifyContent: "center" },
+                }}
+                onSelectedItemsChange={(value) => {
+                  setProps({ ...props, metalPurity: value[0] });
+                  if (updated) setUpdated(false);
+                }}
+              />
+            </View>
+            <View
+              style={{
+                flex: 1,
+                height: 50,
+                justifyContent: "center",
+                marginEnd: 10,
+                marginTop: 5,
+                marginBottom: 5,
+                borderRadius: 5,
+                borderColor: colors.border,
+                borderWidth: 1,
+              }}>
+              <SectionedMultiSelect
+                single={true}
+                disabled={state.indicators.requestedFeature != "order" ? true : false}
+                colors={{ primary: colors.accent }}
+                showDropDowns={false}
+                expandDropDowns={true}
+                items={[
+                  {
+                    name: "Color Types",
+                    id: 0,
+                    colors: [
+                      { name: "YG", id: "YG" },
+                      { name: "WG", id: "WG" },
+                      { name: "PG", id: "PG" },
+                      { name: "YW", id: "YW" },
+                      { name: "PW", id: "PW" },
+                      { name: "GW", id: "GW" },
+                      { name: "PA", id: "PA" },
+                    ],
+                  },
+                ]}
+                selectedItems={[props.metalType]}
+                uniqueKey="id"
+                subKey="colors"
+                IconRenderer={MaterialIcons}
+                styles={{
+                  selectToggle: { marginStart: 10, marginEnd: 10 },
+                  container: {
+                    maxHeight: "50%",
+                    width: "80%",
+                    alignSelf: "center",
+                    borderRadius: 15,
+                  },
+                  modalWrapper: { justifyContent: "center" },
+                }}
+                onSelectedItemsChange={(value) => {
+                  setProps({ ...props, metalType: value[0] });
+                  if (updated) setUpdated(false);
+                }}
+              />
+            </View>
+          </View>
+          <View style={{ flexDirection: "row", alignItems: "center", margin: 5 }}>
             <TextInput
               label="Remarks"
-              disabled={false}
+              disabled={state.indicators.requestedFeature != "order" ? true : false}
               placeholder="Type some Remarks"
+              value={props.orderProductRemarks}
               underlineColor={colors.accent}
-              style={{ borderRadius: 5 }}
+              style={{ flex: 1, borderRadius: 5 }}
               theme={{ colors: { primary: colors.accent, background: colors.card } }}
-            />
-          </View>
-          <View
-            style={{
-              flex: 1,
-              flexDirection: "row",
-              margin: 5,
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}>
-            <Counter
-              start={1}
-              min={1}
-              max={5}
-              buttonStyle={{
-                margin: 5,
-                borderColor: colors.accent,
-                borderRadius: 10,
-                borderWidth: 1.5,
+              onChangeText={(text) => {
+                setProps({ ...props, orderProductRemarks: text });
+                if (updated) setUpdated(false);
               }}
-              buttonTextStyle={{ color: colors.accent }}
-              countTextStyle={{ color: colors.accent }}
-              onChange={(value) => console.log("quantity", value)}
             />
             <Button
               type="outline"
-              icon={<Icon name="trash-can-outline" size={24} color={colors.accent} />}
+              icon={
+                <MaterialCommunityIcons name="trash-can-outline" size={28} color={colors.accent} />
+              }
               buttonStyle={{
                 margin: 5,
                 alignSelf: "flex-end",
@@ -132,6 +207,49 @@ const CartOrderItem = ({ cart }) => {
               onPress={() => removeFromCart()}
             />
           </View>
+          {state.indicators.requestedFeature == "order" ? (
+            <View
+              style={{
+                flex: 1,
+                flexDirection: "row",
+                margin: 5,
+                justifyContent: "flex-end",
+                alignItems: "center",
+              }}>
+              <Counter
+                start={1}
+                min={1}
+                max={5}
+                buttonStyle={{
+                  margin: 5,
+                  borderColor: colors.accent,
+                  borderRadius: 10,
+                  borderWidth: 1.5,
+                }}
+                buttonTextStyle={{ color: colors.accent }}
+                countTextStyle={{ color: colors.accent }}
+                onChange={(value) => {
+                  setProps({ ...props, orderProductQuantity: value });
+                  if (updated) setUpdated(false);
+                }}
+              />
+              <Button
+                title="Save"
+                disabled={props === prevObject || prevObject == null ? true : false}
+                containerStyle={{ flex: 1 }}
+                buttonStyle={{ backgroundColor: colors.accent, borderRadius: 10 }}
+                onPress={async () => {
+                  console.log("dispatched to store");
+                  //Step 1: If updated is false, make it true
+                  //Because we have just updated the item
+                  if (!updated) setUpdated(true);
+                  //Step 2: Dispatch the object to store
+                  await dispatch({ type: "UPDATE_CART_ITEM", payload: props });
+                  Toast.show(`Item Updated: ${cart.skuNumber}`);
+                }}
+              />
+            </View>
+          ) : null}
         </View>
       </View>
     </Card>

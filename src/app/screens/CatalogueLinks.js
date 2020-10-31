@@ -17,10 +17,12 @@ export default function CatalogueLinks() {
 
   //State Codes
   const { state, dispatch } = useStore();
+  const [visible, setVisible] = useState(true);
   const [isRefreshing, setRefreshing] = useState(false);
   const [refresh, updateRefresh] = useState(false);
 
   useEffect(() => {
+    console.log("indicator", state.indicators.isFetchingLinks);
     fetchCatalogueLinks();
   }, []);
 
@@ -28,20 +30,19 @@ export default function CatalogueLinks() {
     refresh ? updateRefresh(false) : updateRefresh(true);
     if (state.data.links.length != 0) {
       console.log("links flag is", state.indicators.isFetchingLinks);
-      dispatch({ type: "SET_LINKS_FLAG", payload: false });
       dispatch({ type: "SET_LINKS_REFRESH", payload: false });
-    } else if (state.data.links.length == 0 && state.indicators.linksRefreshed) {
-      dispatch({ type: "SET_LINKS_FLAG", payload: false });
+    } else {
       dispatch({ type: "SET_LINKS_REFRESH", payload: false });
     }
   }, [state.data.links]);
 
-  function fetchCatalogueLinks() {
+  async function fetchCatalogueLinks() {
     getCatalogueLinks(115)
       .then(async (links) => {
         console.log("links response", links);
         await dispatch({ type: "UPDATE_LINKS", payload: links });
         await dispatch({ type: "SET_LINKS_REFRESH", payload: true });
+        setVisible(false);
         setRefreshing(false);
       })
       .catch((error) => {
@@ -77,7 +78,7 @@ export default function CatalogueLinks() {
           }}
           refreshing={isRefreshing}
           ListEmptyComponent={
-            !state.indicators.isFetchingLinks && state.data.links.length == 0 ? (
+            !visible && state.data.links.length == 0 ? (
               <View style={{ alignItems: "center" }}>
                 <Text style={{ color: "grey" }}>You currently have no Active Links</Text>
                 <Text style={{ color: colors.text, fontSize: 18, fontWeight: "900", padding: 10 }}>
@@ -88,7 +89,7 @@ export default function CatalogueLinks() {
           }
         />
 
-        {state.indicators.isFetchingLinks == true ? (
+        {visible ? (
           <View style={{ width: "100%", height: "100%", flex: 1, position: "absolute" }}>
             <View
               style={{

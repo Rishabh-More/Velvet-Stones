@@ -180,6 +180,17 @@ export default function Filter() {
               IconRenderer={Icon}
               selectText="Select Stock"
               showDropDowns={false}
+              styles={{
+                container: {
+                  maxHeight: "30%",
+                  width: "80%",
+                  alignSelf: "center",
+                  borderRadius: 15,
+                },
+                modalWrapper: {
+                  justifyContent: "center",
+                },
+              }}
               onSelectedItemsChange={(value) => updateQuery({ ...query, itemStatus: value })}
               selectedItems={query.itemStatus}
               showRemoveAll={true}
@@ -208,6 +219,15 @@ export default function Filter() {
               IconRenderer={Icon}
               selectText="Select Category"
               showDropDowns={false}
+              styles={{
+                container: {
+                  maxHeight: "50%",
+                  width: "80%",
+                  alignSelf: "center",
+                  borderRadius: 15,
+                },
+                modalWrapper: { justifyContent: "center" },
+              }}
               onSelectedItemsChange={(value) => updateQuery({ ...query, itemCategory: value })}
               selectedItems={query.itemCategory}
               showRemoveAll={true}
@@ -216,7 +236,7 @@ export default function Filter() {
           <View style={{ marginStart: 15, marginEnd: 15, marginBottom: 10 }}>
             <Title>Item Type</Title>
             <SectionedMultiSelect
-              colors={{ primary: colors.primary, chipColor: colors.accent }}
+              colors={{ primary: colors.accent, chipColor: colors.accent }}
               items={[
                 {
                   name: "Item Type",
@@ -233,9 +253,17 @@ export default function Filter() {
               IconRenderer={Icon}
               selectText="Select Type"
               showDropDowns={false}
+              styles={{
+                container: {
+                  maxHeight: "35%",
+                  width: "80%",
+                  alignSelf: "center",
+                  borderRadius: 15,
+                },
+                modalWrapper: { justifyContent: "center" },
+              }}
               onSelectedItemsChange={(value) => updateQuery({ ...query, itemType: value })}
               selectedItems={query.itemType}
-              showCancelButton={true}
               showRemoveAll={true}
             />
           </View>

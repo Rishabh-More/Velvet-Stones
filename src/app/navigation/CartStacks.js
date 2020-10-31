@@ -8,6 +8,7 @@ import {
 import Cart from "../screens/Cart";
 import Customers from "../screens/Customers";
 import Success from "../screens/Success";
+import LinkOptions from "../screens/LinkOptions";
 
 const CartStack = createStackNavigator();
 
@@ -19,6 +20,11 @@ const CartStacks = () => (
       name="customers"
       component={Customers}
       options={{ headerTitle: "Customer Details" }}
+    />
+    <CartStack.Screen
+      name="link-options"
+      component={LinkOptions}
+      options={{ headerTitle: "Catalogue Link Options" }}
     />
     <CartStack.Screen
       name="success"

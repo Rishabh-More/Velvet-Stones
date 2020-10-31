@@ -4,7 +4,7 @@ import { useDeviceOrientation, useDimensions } from "@react-native-community/hoo
 import { useStore } from "../config/Store";
 import { isTablet, isPhone } from "react-native-device-detection";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
-import { SafeAreaView, View, Text, StyleSheet, FlatList } from "react-native";
+import { SafeAreaView, View, Text, StyleSheet, FlatList, Alert } from "react-native";
 import { Appbar } from "react-native-paper";
 import { Button } from "react-native-elements";
 import Toast from "react-native-simple-toast";
@@ -16,6 +16,34 @@ export default function Cart() {
   const dimensions = useDimensions();
 
   const { state, dispatch } = useStore();
+
+  useEffect(() => {
+    //If No feature has been selected, ask user for feature
+    RequestFeature();
+  }, []);
+
+  function RequestFeature() {
+    if (state.indicators.requestedFeature == "" && state.data.cart.length != 0) {
+      Alert.alert("Checkout Method", `How would you like to checkout products from Cart?`, [
+        {
+          text: "Generate Order",
+          style: "default",
+          onPress: async () => {
+            await dispatch({ type: "SERVE_FEATURE_REQUEST", payload: "order" });
+            Toast.show("Checkout as Order");
+          },
+        },
+        {
+          text: "Generate Link",
+          style: "destructive",
+          onPress: async () => {
+            await dispatch({ type: "SERVE_FEATURE_REQUEST", payload: "link" });
+            Toast.show("Checkout as Catalogue Link");
+          },
+        },
+      ]);
+    }
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -98,7 +126,15 @@ export default function Cart() {
           }}
           containerStyle={{ flex: 1 }}
           title="Checkout"
-          onPress={() => navigation.navigate("customers")}
+          onPress={() => {
+            if (state.indicators.requestedFeature == "order") {
+              navigation.navigate("customers");
+            } else if (state.indicators.requestedFeature == "link") {
+              navigation.navigate("link-options");
+            } else {
+              RequestFeature();
+            }
+          }}
         />
       </View>
     </SafeAreaView>

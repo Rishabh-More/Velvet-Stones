@@ -26,6 +26,22 @@ const dataReducer = (state, action) => {
       return { ...state, cart: [...state.cart, action.payload] };
     case "ADD_ALL_TO_CART":
       return { ...state, cart: state.cart.concat(action.payload) };
+    case "UPDATE_CART_ITEM":
+      const indexCart = state.cart.map((item) => item.skuNumber).indexOf(action.payload.skuNumber);
+      return {
+        ...state,
+        cart: [
+          ...state.cart.slice(0, indexCart),
+          {
+            ...state.cart[indexCart],
+            metalPurity: action.payload.metalPurity,
+            metalType: action.payload.metalType,
+            orderProductQuantity: action.payload.orderProductQuantity,
+            orderProductRemarks: action.payload.orderProductRemarks,
+          },
+          ...state.cart.slice(indexCart + 1),
+        ],
+      };
     case "DELETE_FROM_CART":
       return {
         ...state,
@@ -36,19 +52,19 @@ const dataReducer = (state, action) => {
     case "UPDATE_LINKS":
       return { ...state, links: action.payload };
     case "UPDATE_LINKS_OTP":
-      const index = state.links.map((item) => item.id).indexOf(action.payload.id);
+      const indexLink = state.links.map((item) => item.id).indexOf(action.payload.id);
       return {
         ...state,
         links: [
-          ...state.links.slice(0, index),
+          ...state.links.slice(0, indexLink),
           {
-            ...state.links[index],
+            ...state.links[indexLink],
             otp: action.payload.otp,
             otpCreatedAt: action.payload.otpCreatedAt,
             otpexpireAt: action.payload.otpExpireAt,
             updatedAt: action.payload.updatedAt,
           },
-          ...state.links.slice(index + 1),
+          ...state.links.slice(indexLink + 1),
         ],
       };
     case "DELETE_LINK":

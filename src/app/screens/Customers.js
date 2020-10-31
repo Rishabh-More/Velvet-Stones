@@ -34,7 +34,7 @@ export default function Customers() {
   const [order, setOrder] = useState({
     shopId: 115,
     customerId: 0,
-    remarks: "Customer Details Screen Remarks",
+    remarks: "",
     products: [],
   });
 
@@ -178,6 +178,7 @@ export default function Customers() {
               <TextInput
                 mode="outlined"
                 label="Order Remarks"
+                value={order.remarks}
                 style={{ flex: 1, margin: 5, marginEnd: 0 }}
                 theme={{ colors: { placeholder: colors.accent, background: colors.primary } }}
               />
