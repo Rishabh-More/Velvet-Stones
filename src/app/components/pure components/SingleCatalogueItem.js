@@ -22,6 +22,9 @@ const SingleCatalogueItem = ({ product }) => {
   const [visible, setIsVisible] = useState(false);
 
   async function AddProductToCart() {
+    const { shopId, createdAt, updatedAt, ...rest } = product;
+    //console.log("original product", product);
+    console.log("cart object now", rest);
     //Check if item exists in cart or not
     let found = await state.data.cart.find((item) => item.skuNumber == product.skuNumber);
     console.log("did found item", found);
@@ -30,7 +33,7 @@ const SingleCatalogueItem = ({ product }) => {
       Toast.show("Item is already added to Cart", Toast.LONG);
     } else {
       //Item does not exist in Cart. Add to it
-      await dispatch({ type: "ADD_TO_CART", payload: product });
+      await dispatch({ type: "ADD_TO_CART", payload: rest });
     }
   }
 

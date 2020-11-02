@@ -1,19 +1,14 @@
 import React, { useCallback, useEffect } from "react";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
-import { View, Text, StyleSheet, BackHandler } from "react-native";
+import { SafeAreaView, View, Text, StyleSheet, BackHandler } from "react-native";
+import OrderSuccess from "../components/OrderSuccess";
+import LinkSuccess from "../components/LinkSuccess";
 
-export default function Success() {
-  return (
-    <View styles={styles.container}>
-      <Text>This is Success Screen</Text>
-    </View>
+export default function Success({ route }) {
+  console.log("sucess props received", route.params);
+  return route.params.feature == "order" ? (
+    <OrderSuccess success={route.params.data} />
+  ) : (
+    <LinkSuccess success={route.params.data} />
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-});

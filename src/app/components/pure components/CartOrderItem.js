@@ -22,11 +22,17 @@ const CartOrderItem = ({ cart }) => {
     metalPurity: cart.metalPurity,
     metalType: cart.metalType,
     orderProductRemarks: "",
-    orderProductQuantity: 0,
+    orderProductQuantity: 1,
   });
   const prevObject = usePrevious(props);
   console.log("initial props object", props);
   console.log("previous object", prevObject);
+
+  useEffect(() => {
+    //By Default add orderProductQuantity & orderProductRemarks
+    //to cart item
+    dispatch({ type: "UPDATE_CART_ITEM", payload: props });
+  }, []);
 
   async function removeFromCart() {
     try {
@@ -71,7 +77,7 @@ const CartOrderItem = ({ cart }) => {
         <View style={{ flex: 3 }}>
           <View style={{ flexDirection: "row", alignItems: "flex-end", margin: 5 }}>
             {/* <Title style={{ color: colors.accent }}>{cart.skuNumber}</Title> */}
-            <Text style={{ margin: 5 }}>Design Number: </Text>
+            <Text style={{ margin: 5, color: colors.text }}>Design Number: </Text>
             <Title style={{ color: colors.accent }}>{cart.designNumber}</Title>
           </View>
           <View style={{ flexDirection: "row", zIndex: 5 }}>
@@ -219,7 +225,7 @@ const CartOrderItem = ({ cart }) => {
               <Counter
                 start={1}
                 min={1}
-                max={5}
+                max={100}
                 buttonStyle={{
                   margin: 5,
                   borderColor: colors.accent,

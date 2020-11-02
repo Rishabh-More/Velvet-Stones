@@ -3,10 +3,11 @@ import { useNavigation, useTheme } from "@react-navigation/native";
 import { useStore } from "../config/Store";
 import { getCustomersForShop, addCustomerToShop, generateOrder } from "../api/ApiService";
 import { SafeAreaView, ScrollView, View, Text, StyleSheet } from "react-native";
-import { Card, Title, TextInput, Divider } from "react-native-paper";
+import { Card, Title, TextInput, HelperText, Divider } from "react-native-paper";
 import { Button } from "react-native-elements";
 import MultiSelect from "react-native-multiple-select";
 import { Fold } from "react-native-animated-spinkit";
+import Toast from "react-native-simple-toast";
 
 export default function Customers() {
   const navigation = useNavigation();
@@ -31,11 +32,14 @@ export default function Customers() {
     country: "",
     pincode: "",
   });
+  const [errorName, setNameError] = useState(false);
+  const [errorEmail, setEmailError] = useState(false);
+  const [errorAddress, setAddressError] = useState(false);
   const [order, setOrder] = useState({
     shopId: 115,
     customerId: 0,
     remarks: "",
-    products: [],
+    products: state.data.cart,
   });
 
   useEffect(() => {
@@ -48,6 +52,7 @@ export default function Customers() {
           return item;
         });
         console.log("fixed array", temp);
+        console.log("items in cart", state.data.cart);
         setCustomers(data);
         setPicker(temp);
         setVisible(false);
@@ -61,11 +66,76 @@ export default function Customers() {
     console.log("selected updated", selected);
   }, [selected]);
 
-  function ValidateCustomer() {
+  useEffect(() => {
+    console.log("order object", order);
+  }, [order]);
+
+  async function ValidateCustomer() {
+    var pattern = /^[a-zA-Z0-9\-_]+(\.[a-zA-Z0-9\-_]+)*@[a-z0-9]+(\-[a-z0-9]+)*(\.[a-z0-9]+(\-[a-z0-9]+)*)*\.[a-z]{2,4}$/;
     //Step 1: Validate Customer fields.
+    if (selected.name == "") {
+      //customer name cannot be blank
+      setNameError(true);
+      return;
+    } else {
+      console.log("resolved name");
+      setNameError(false);
+    }
+    //await sleep(1000);
+    if (selected.email == "") {
+      //email cannot be empty
+      setEmailError(true);
+      return;
+    } else if (selected.email != "" && !pattern.test(selected.email)) {
+      //email cannot be Invalid
+      setEmailError(true);
+      return;
+    } else {
+      console.log("resolved email");
+      setEmailError(false);
+    }
+    if (selected.addressLine1 == "") {
+      //address cannot be empty
+      setAddressError(true);
+      return;
+    } else {
+      console.log("resolved address");
+      setAddressError(false);
+    }
     //Step 2: Check if customer exists or not. If not
     // Add Customer to shop
+    const found = customers.some(
+      (item) =>
+        item.name == selected.name &&
+        item.email == selected.email &&
+        item.addressLine1 == selected.addressLine1 &&
+        item.phone == selected.phone
+    );
+    if (!found) {
+      //Call the api, add customer to shop
+      addCustomerToShop(selected)
+        .then(async (data) => {
+          console.log("add customers response", data);
+          await setSelected({ ...selected, id: data.id });
+        })
+        .catch((error) => {
+          console.log("response error", error);
+        });
+    }
     //Step 3: Call the Order Api
+    Toast.show("Validated Sucessfully!!");
+    ExportOrder();
+  }
+
+  async function ExportOrder() {
+    await setOrder({ ...order, customerId: parseInt(selected.id) });
+    generateOrder(order)
+      .then((data) => {
+        console.log("order created", data);
+      })
+      .catch((error) => {
+        console.log("response error", error);
+      });
   }
 
   return (
@@ -114,10 +184,10 @@ export default function Customers() {
             submitButtonColor={colors.accentDark}
             onSelectedItemsChange={(value) => {
               let picked = customers.find((item) => item.id == parseInt(value));
-              //console.log('picked customer object', picked);
+              console.log("picked customer object", picked);
               setSelected({
                 ...selected,
-                id: picked.id,
+                id: parseInt(picked.id),
                 name: picked.name,
                 email: picked.email,
                 phone: picked.phone,
@@ -138,27 +208,57 @@ export default function Customers() {
             <View style={{ marginStart: 10, marginEnd: 10, margin: 5 }}>
               <TextInput
                 mode="outlined"
-                label="Customer Name"
+                label="Customer Name (required)"
                 value={selected.name}
-                theme={{ colors: { placeholder: colors.accent, background: colors.primary } }}
+                error={errorName}
+                theme={{
+                  colors: { primary: colors.accent, background: colors.primary, error: "red" },
+                }}
+                onChangeText={(text) => setSelected({ ...selected, name: text })}
               />
+              {errorName ? (
+                <HelperText type="error" visible={errorName} theme={{ colors: { error: "red" } }}>
+                  Customer Name must not be Empty
+                </HelperText>
+              ) : null}
             </View>
             <View style={{ marginStart: 10, marginEnd: 10, margin: 5 }}>
               <TextInput
                 mode="outlined"
-                label="Customer Email"
+                label="Customer Email (required)"
                 value={selected.email}
-                theme={{ colors: { placeholder: colors.accent, background: colors.primary } }}
+                error={errorEmail}
+                theme={{
+                  colors: { primary: colors.accent, background: colors.primary, error: "red" },
+                }}
+                onChangeText={(text) => setSelected({ ...selected, email: text })}
               />
+              {errorEmail ? (
+                <HelperText type="error" visible={errorEmail} theme={{ colors: { error: "red" } }}>
+                  Invalid Email Address
+                </HelperText>
+              ) : null}
             </View>
             <View style={{ marginStart: 10, marginEnd: 10, margin: 5 }}>
               <TextInput
                 mode="outlined"
-                label="Customer Address"
+                label="Customer Address (required)"
                 value={selected.addressLine1}
-                theme={{ colors: { placeholder: colors.accent, background: colors.primary } }}
+                error={errorAddress}
+                theme={{
+                  colors: { primary: colors.accent, background: colors.primary, error: "red" },
+                }}
                 multiline={true}
+                onChangeText={(text) => setSelected({ ...selected, addressLine1: text })}
               />
+              {errorAddress ? (
+                <HelperText
+                  type="error"
+                  visible={errorAddress}
+                  theme={{ colors: { error: "red" } }}>
+                  Customer Address cannot be Empty
+                </HelperText>
+              ) : null}
             </View>
             <View
               style={{
@@ -172,15 +272,17 @@ export default function Customers() {
                 mode="outlined"
                 label="Contact No."
                 value={selected.phone.toString()}
-                theme={{ colors: { placeholder: colors.accent, background: colors.primary } }}
+                theme={{ colors: { primary: colors.accent, background: colors.primary } }}
                 style={{ flex: 1, margin: 5, marginStart: 0 }}
+                onChangeText={(text) => setSelected({ ...selected, phone: parseInt(text) || 0 })}
               />
               <TextInput
                 mode="outlined"
                 label="Order Remarks"
                 value={order.remarks}
                 style={{ flex: 1, margin: 5, marginEnd: 0 }}
-                theme={{ colors: { placeholder: colors.accent, background: colors.primary } }}
+                theme={{ colors: { primary: colors.accent, background: colors.primary } }}
+                onChangeText={(text) => setOrder({ ...order, remarks: text })}
               />
             </View>
           </View>

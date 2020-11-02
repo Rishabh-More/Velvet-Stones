@@ -17,6 +17,7 @@ const CatalogueLinkItem = ({ link }) => {
   //State Code
   const [shareDialog, setShareDialog] = useState(false);
   const [generating, setGenerating] = useState(false);
+  const [deleting, setDeleting] = useState(false);
   const { state, dispatch } = useStore();
 
   useEffect(() => {
@@ -61,15 +62,18 @@ const CatalogueLinkItem = ({ link }) => {
 
   async function deleteLink() {
     try {
+      setDeleting(true);
       expireCatalogueLink(link.id)
         .then((success) => {
           if (success) {
             const index = state.data.links.map((item) => item.id).indexOf(link.id);
             console.log("index is", index);
             dispatch({ type: "DELETE_LINK", payload: index });
+            Toast.show(`Link Expired`);
           } else {
             alert("Failed to expire Link");
           }
+          setDeleting(false);
         })
         .catch((error) => {
           console.log("response error", error);
@@ -94,7 +98,7 @@ const CatalogueLinkItem = ({ link }) => {
   }
 
   async function shareCatalogueUrl(url) {
-    const baseMessage = `Hi,\n Please Access your Catalogue using this link: ${url}.`;
+    const baseMessage = `Hi,\nPlease Access your Catalogue using this link: ${url}.`;
     const message = link.otp != null ? `${baseMessage}\n OTP: ${link.otp}` : baseMessage;
     try {
       const result = await Share.share({
@@ -173,7 +177,9 @@ const CatalogueLinkItem = ({ link }) => {
           <Button
             title="Expire Link"
             type="outline"
+            loading={deleting}
             titleStyle={{ marginStart: 5, color: colors.accent }}
+            loadingProps={{ color: colors.accent }}
             icon={<Icon name="trash-can-outline" size={20} color={colors.accent} />}
             buttonStyle={{
               borderColor: colors.accent,

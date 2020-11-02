@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useNavigation, useTheme } from "@react-navigation/native";
+import { useStore } from "../config/Store";
 import { SafeAreaView, View, Text, StyleSheet } from "react-native";
-import { TextInput } from "react-native-paper";
+import { TextInput, HelperText } from "react-native-paper";
 import { Button } from "react-native-elements";
 import ToggleSwitch from "toggle-switch-react-native";
 import DropDownPicker from "react-native-dropdown-picker";
@@ -12,18 +13,16 @@ export default function LinkOptions() {
   const { colors, dark } = useTheme();
 
   //State Codes
-  const [enable, setEnable] = useState(false);
-  const [temp, setTemp] = useState({
-    name: "Diva 10",
-    category: "RINGS",
-  });
+  const { state, dispatch } = useStore();
+  const [visible, setVisible] = useState(false);
+  const [error, setError] = useState(false);
   const [link, setLink] = useState({
     name: "",
     designNumbers: {
-      designNumber: [], //List of Design. Yes!! Ik it's weird
+      designNumber: state.data.cart.map((item) => item.designNumber),
     },
     otpEnabled: 0,
-    otpValidity: 2,
+    otpValidity: null,
     shopId: 115,
   });
 
@@ -31,9 +30,43 @@ export default function LinkOptions() {
     console.log("link object", link);
   }, [link]);
 
-  useEffect(() => {
-    console.log("temp object", temp);
-  }, [temp]);
+  async function ValidateOptions() {
+    //Check if Link's Name is Empty or not
+    if (link.name == "") {
+      setError(true);
+      return;
+    } else {
+      setError(false);
+    }
+    if (link.otpEnabled == 1 && link.otpValidity == null) {
+      link.otpValidity = 2;
+    } else if (link.otpEnabled == 0 && link.otpValidity != null) {
+      link.otpValidity = null;
+    }
+    //console.log("link object for api", link);
+    ExportCatalogueLink();
+  }
+
+  async function ExportCatalogueLink() {
+    //TODO get all design numbers from cart as an array.
+    console.log("exporting final object", link);
+    let packet = {};
+    await generateCatalogueLink(link)
+      .then((data) => {
+        packet = {
+          feature: "link",
+          data: data,
+        };
+        dispatch({ type: "CLEAR_CART" });
+      })
+      .catch((error) => {
+        console.log("generate link api error", error);
+        setVisible(false);
+      });
+    navigation.navigate("success", packet);
+    setVisible(false);
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={{ flex: 1, justifyContent: "center" }}>
@@ -47,10 +80,18 @@ export default function LinkOptions() {
                   placeholder: colors.accent,
                   primary: colors.accent,
                   background: colors.primary,
+                  error: "red",
                 },
               }}
               value={link.name}
+              error={error}
+              onChangeText={(text) => setLink({ ...link, name: text })}
             />
+            {error ? (
+              <HelperText type="error" visible={error} theme={{ colors: { error: "red" } }}>
+                Link Name cannot be Empty
+              </HelperText>
+            ) : null}
             {/* <CheckBox center title="Enable OTP?" checked={true} checkedColor={colors.accent} /> */}
             <View style={{ marginTop: 10, marginBottom: 10 }}>
               <ToggleSwitch
@@ -87,7 +128,7 @@ export default function LinkOptions() {
                   { label: "8 Hours", value: 8 },
                   { label: "12 Hours", value: 12 },
                 ]}
-                defaultValue={link.otpValidity}
+                defaultValue={2}
                 containerStyle={{ height: 50, flex: 1 }}
                 style={{ backgroundColor: colors.primary, borderColor: colors.border }}
                 dropDownStyle={{ backgroundColor: colors.primary, borderColor: colors.border }}
@@ -104,8 +145,13 @@ export default function LinkOptions() {
       <View>
         <Button
           title="Generate Link"
+          loading={visible}
           buttonStyle={{ backgroundColor: colors.accent, height: 50, borderRadius: 15 }}
           containerStyle={{ margin: 10 }}
+          onPress={() => {
+            setVisible(true);
+            ValidateOptions();
+          }}
         />
       </View>
     </SafeAreaView>
