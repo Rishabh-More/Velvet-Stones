@@ -24,6 +24,7 @@ const AppDefaultTheme = {
     textSubtle: "rgb(87, 87, 87)",
     textInverse: "rgb(255, 255, 255)",
     border: "rgb(224, 224, 224)",
+    disabled: "rgb(204,204,204)",
     notification: "rgb(255, 69, 58)",
   },
 };
@@ -46,6 +47,7 @@ const AppDarkTheme = {
     textSubtle: "rgb(245,245,245)",
     textInverse: "rgb(28, 28, 30)",
     border: "rgb(87, 87, 87)",
+    disabled: "rgb(96,99,104)",
     notification: "rgb(255, 69, 58)",
   },
 };

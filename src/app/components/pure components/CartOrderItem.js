@@ -242,6 +242,7 @@ const CartOrderItem = ({ cart }) => {
               <Button
                 title="Save"
                 disabled={props === prevObject || prevObject == null ? true : false}
+                disabledStyle={{ backgroundColor: colors.disabled }}
                 containerStyle={{ flex: 1 }}
                 buttonStyle={{ backgroundColor: colors.accent, borderRadius: 10 }}
                 onPress={async () => {

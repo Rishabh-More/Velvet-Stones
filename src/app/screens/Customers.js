@@ -16,6 +16,8 @@ export default function Customers() {
   //State Codes
   const { state, dispatch } = useStore();
   const [isVisible, setVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [isReady, setReady] = useState(false);
   const [customers, setCustomers] = useState([]);
   const [picker, setPicker] = useState([]);
   const [selected, setSelected] = useState({
@@ -67,8 +69,17 @@ export default function Customers() {
   }, [selected]);
 
   useEffect(() => {
-    console.log("order object", order);
+    if (order.customerId != 0) {
+      //Object is ready for export
+      setReady(true);
+    }
   }, [order]);
+
+  useEffect(() => {
+    if (isReady) {
+      ExportOrder();
+    }
+  }, [isReady]);
 
   async function ValidateCustomer() {
     var pattern = /^[a-zA-Z0-9\-_]+(\.[a-zA-Z0-9\-_]+)*@[a-z0-9]+(\-[a-z0-9]+)*(\.[a-z0-9]+(\-[a-z0-9]+)*)*\.[a-z]{2,4}$/;
@@ -102,6 +113,7 @@ export default function Customers() {
       console.log("resolved address");
       setAddressError(false);
     }
+    setLoading(true);
     //Step 2: Check if customer exists or not. If not
     // Add Customer to shop
     const found = customers.some(
@@ -119,23 +131,41 @@ export default function Customers() {
           await setSelected({ ...selected, id: data.id });
         })
         .catch((error) => {
+          Toast.show("Couldn't Add Customer to Shop");
           console.log("response error", error);
+          setLoading(false);
+          return;
         });
     }
     //Step 3: Call the Order Api
     Toast.show("Validated Sucessfully!!");
-    ExportOrder();
+    await setOrder({ ...order, customerId: parseInt(selected.id) });
+    //ExportOrder();
   }
 
   async function ExportOrder() {
-    await setOrder({ ...order, customerId: parseInt(selected.id) });
-    generateOrder(order)
-      .then((data) => {
-        console.log("order created", data);
-      })
-      .catch((error) => {
-        console.log("response error", error);
-      });
+    if (isReady) {
+      let packet = {};
+      await generateOrder(order)
+        .then((data) => {
+          console.log("order created", data);
+          packet = {
+            feature: "order",
+            data: data,
+          };
+          dispatch({ type: "CLEAR_CART" });
+          setLoading(false);
+        })
+        .catch((error) => {
+          console.log("response error", error);
+          Toast.show("Failed to Generate Order");
+          setLoading(false);
+          return;
+        });
+      navigation.navigate("success", packet);
+    } else {
+      Toast.show("Oops couldn't Generate Order");
+    }
   }
 
   return (
@@ -292,6 +322,7 @@ export default function Customers() {
       <View>
         <Button
           title="Generate Order"
+          loading={loading}
           buttonStyle={{ height: 50, backgroundColor: colors.accent, borderRadius: 15 }}
           containerStyle={{ margin: 10 }}
           onPress={() => ValidateCustomer()}
