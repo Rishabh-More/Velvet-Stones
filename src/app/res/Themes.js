@@ -1,5 +1,11 @@
 import { DarkTheme as PaperDarkTheme, DefaultTheme as PaperDefaultTheme } from "react-native-paper";
 
+const Colors = {
+  accent: "rgb(255, 152, 0)", //"rgb(192, 24, 91)",
+  accentLight: "rgb(255, 201, 71)", //"rgb(249, 86, 136)",
+  accentDark: "rgb(198, 105, 0)", //"rgb(139, 0, 50)",
+};
+
 const AppDefaultTheme = {
   name: "Light Theme",
   dark: false,
@@ -7,9 +13,9 @@ const AppDefaultTheme = {
   colors: {
     ...PaperDefaultTheme.colors,
     primary: "rgb(255, 255, 255)",
-    accent: "rgb(192, 24, 91)",
-    accentDark: "rgb(139, 0, 50)",
-    accentLight: "rgb(249, 86, 136)",
+    accent: Colors.accent,
+    accentDark: Colors.accentDark,
+    accentLight: Colors.accentLight,
     statusBar: "rgb(232, 232, 232)",
     background: "rgb(245, 245, 240)",
     card: "rgb(255, 255, 255)",
@@ -29,9 +35,9 @@ const AppDarkTheme = {
   colors: {
     ...PaperDarkTheme.colors,
     primary: "rgb(36, 36, 36)",
-    accent: "rgb(192, 24, 91)",
-    accentDark: "rgb(139, 0, 50)",
-    accentLight: "rgb(249, 86, 136)",
+    accent: Colors.accent,
+    accentDark: Colors.accentDark,
+    accentLight: Colors.accentLight,
     statusBar: "rgb(18, 18, 18)",
     background: "rgb(18, 18, 18)",
     card: "rgb(30, 30, 30)",

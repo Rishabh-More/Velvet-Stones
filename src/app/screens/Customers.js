@@ -36,7 +36,7 @@ export default function Customers() {
   const [errorEmail, setEmailError] = useState(false);
   const [errorAddress, setAddressError] = useState(false);
   const [order, setOrder] = useState({
-    shopId: 115,
+    shopId: "115",
     customerId: 0,
     remarks: "",
     products: state.data.cart,

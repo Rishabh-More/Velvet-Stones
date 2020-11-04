@@ -38,6 +38,7 @@ export default function LinkOptions() {
     } else {
       setError(false);
     }
+    setVisible(true);
     if (link.otpEnabled == 1 && link.otpValidity == null) {
       link.otpValidity = 2;
     } else if (link.otpEnabled == 0 && link.otpValidity != null) {
@@ -134,7 +135,7 @@ export default function LinkOptions() {
                 dropDownStyle={{ backgroundColor: colors.primary, borderColor: colors.border }}
                 labelStyle={{ color: colors.text }}
                 selectedLabelStyle={{ color: colors.text }}
-                activeItemStyle={{ backgroundColor: colors.accentLight }}
+                activeItemStyle={{ backgroundColor: colors.accent }}
                 arrowColor={colors.text}
                 onChangeItem={(item) => setLink({ ...link, otpValidity: item.value })}
               />
@@ -149,7 +150,6 @@ export default function LinkOptions() {
           buttonStyle={{ backgroundColor: colors.accent, height: 50, borderRadius: 15 }}
           containerStyle={{ margin: 10 }}
           onPress={() => {
-            setVisible(true);
             ValidateOptions();
           }}
         />

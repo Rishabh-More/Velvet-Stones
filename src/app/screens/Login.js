@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from "react";
-import useDeviceOrientation from "@react-native-community/hooks";
+import { useDeviceOrientation } from "@react-native-community/hooks";
 import { isTablet, isPhone } from "react-native-device-detection";
 import { useTheme, useNavigation } from "@react-navigation/native";
-import { SafeAreaView, View, Text, StyleSheet, ImageBackground } from "react-native";
-import { HelperText, TextInput } from "react-native-paper";
+import { SafeAreaView, View, Text, StyleSheet, ScrollView, ImageBackground } from "react-native";
+import { KeyboardAvoidingScrollView } from "react-native-keyboard-avoiding-scroll-view";
+import { Title, Subheading, TextInput, HelperText } from "react-native-paper";
 import { Input, Button } from "react-native-elements";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
 export default function Login() {
   const navigation = useNavigation();
+  const orientation = useDeviceOrientation();
   const { colors, dark } = useTheme();
   const [secureEntry, setSecureEntry] = useState(true);
   const [errors, setErrors] = useState({
@@ -17,7 +19,8 @@ export default function Login() {
     license: false,
     device: false,
   });
-  console.log("errors", errors);
+  console.log("orientation is", orientation);
+  //console.log("errors", errors);
   const onChangeText = (text) => hasErrors(text);
 
   const displayPassword = () => {
@@ -34,111 +37,167 @@ export default function Login() {
     // }
   };
 
-  return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colors.accentDark }]}>
-      <ImageBackground source={require("../res/assets/login_cover_background.jpg")} style={{ flex: 1 }}>
-        <View style={{ flex: 1 }} />
+  function LoginContent() {
+    return (
+      <View style={{ flex: 1 }}>
         <View
           style={{
-            flex: 2,
-            backgroundColor: "#fff",
-            margin: 15,
-            marginBottom: 30,
-            borderRadius: 25,
+            flex: 1,
+            flexDirection: isTablet ? "row" : "column",
+            backgroundColor: "white",
           }}>
-          <View style={{ flex: 1, marginTop: 30, margin: 15 }}>
-            <Text style={{ fontSize: 25, fontWeight: "900" }}>Welcome Fashionista!</Text>
-            <Text style={{ marginTop: 10, marginBottom: 10 }}>Sign in to Continue</Text>
-          </View>
-          <View style={{ margin: 1 }}>
-            <Input
-              placeholder="Email"
-              containerStyle={{ marginTop: 5, marginBottom: 5 }}
-              inputContainerStyle={{
-                borderColor: colors.accent,
-                borderStartWidth: 1,
-                borderTopWidth: 1,
-                borderEndWidth: 1,
-                borderBottomWidth: 2,
-                borderRadius: 10,
+          {/**For Email & Password */}
+          <View style={{ flex: 1, justifyContent: "center", margin: 5 }}>
+            <TextInput
+              mode="outlined"
+              label="Email Address"
+              theme={{
+                colors: {
+                  placeholder: colors.accent,
+                  primary: colors.accent,
+                  error: "red",
+                },
               }}
-              leftIcon={<Icon name="email-outline" size={24} color={colors.accent} style={{ marginStart: 5 }} />}
-              errorMessage={errors.email ? "Email Address is invalid!" : null}
-              renderErrorMessage={true}
-              onChangeText={onChangeText}
+              style={{ marginStart: isTablet ? 20 : 5, marginEnd: isTablet ? 20 : 5 }}
             />
+            <HelperText
+              visible={true}
+              type="error"
+              theme={{ colors: { error: "red" } }}
+              style={{ marginStart: isTablet ? 15 : 5 }}>
+              Invalid Email Address
+            </HelperText>
           </View>
-          <View style={{ margin: 1 }}>
-            <Input
-              placeholder="Password"
-              containerStyle={{ marginTop: 5, marginBottom: 5 }}
-              inputContainerStyle={{
-                borderColor: colors.accent,
-                borderStartWidth: 1,
-                borderTopWidth: 1,
-                borderEndWidth: 1,
-                borderBottomWidth: 2,
-                borderRadius: 10,
+          <View style={{ flex: 1, justifyContent: "center", margin: 5 }}>
+            <TextInput
+              mode="outlined"
+              label="Password"
+              theme={{
+                colors: {
+                  placeholder: colors.accent,
+                  primary: colors.accent,
+                  error: "red",
+                },
               }}
-              leftIcon={<Icon name="lock-outline" size={24} color={colors.accent} style={{ marginStart: 5 }} />}
-              rightIcon={
-                <Icon
-                  name={secureEntry ? "eye-off-outline" : "eye-outline"}
-                  size={24}
-                  color={colors.accent}
-                  style={{ marginEnd: 5 }}
-                  onPress={() => displayPassword()}
-                />
-              }
-              secureTextEntry={secureEntry}
-              errorMessage={errors.password ? "Password should be more than 3 characters" : null}
-              renderErrorMessage={true}
-              onChangeText={onChangeText}
+              style={{ marginStart: isTablet ? 20 : 5, marginEnd: isTablet ? 20 : 5 }}
             />
+            <HelperText
+              visible={true}
+              type="error"
+              theme={{ colors: { error: "red" } }}
+              style={{ marginStart: isTablet ? 15 : 5 }}>
+              Invalid Password
+            </HelperText>
           </View>
-          <View style={{ margin: 1 }}>
-            <Input
-              placeholder="License Key"
-              containerStyle={{ marginTop: 5, marginBottom: 5 }}
-              inputContainerStyle={{
-                borderColor: colors.accent,
-                borderStartWidth: 1,
-                borderTopWidth: 1,
-                borderEndWidth: 1,
-                borderBottomWidth: 2,
-                borderRadius: 10,
+        </View>
+        <View
+          style={{
+            flex: 1,
+            flexDirection: isTablet ? "row" : "column",
+            backgroundColor: "white",
+          }}>
+          {/**For License Key and Device Name */}
+          <View style={{ flex: 1, justifyContent: "center", margin: 5 }}>
+            <TextInput
+              mode="outlined"
+              label="License Key"
+              theme={{
+                colors: {
+                  placeholder: colors.accent,
+                  primary: colors.accent,
+                  error: "red",
+                },
               }}
-              leftIcon={<Icon name="shield-key-outline" size={24} color={colors.accent} style={{ marginStart: 5 }} />}
-              errorMessage={errors.license ? "License must not be Empty" : null}
-              renderErrorMessage={true}
-              onChangeText={onChangeText}
+              style={{ marginStart: isTablet ? 20 : 5, marginEnd: isTablet ? 20 : 5 }}
             />
+            <HelperText
+              visible={true}
+              type="error"
+              theme={{ colors: { error: "red" } }}
+              style={{ marginStart: isTablet ? 15 : 5 }}>
+              Invalid License Key
+            </HelperText>
           </View>
-          <View style={{ marginBottom: 5 }}>
-            <Input
-              placeholder="Device Name"
-              containerStyle={{ marginTop: 5 }}
-              inputContainerStyle={{
-                borderColor: colors.accent,
-                borderStartWidth: 1,
-                borderTopWidth: 1,
-                borderEndWidth: 1,
-                borderBottomWidth: 2,
-                borderRadius: 10,
+          <View style={{ flex: 1, justifyContent: "center", margin: 5 }}>
+            <TextInput
+              mode="outlined"
+              label="Device Info"
+              theme={{
+                colors: {
+                  placeholder: colors.accent,
+                  primary: colors.accent,
+                  error: "red",
+                },
               }}
-              leftIcon={<Icon name="devices" size={24} color={colors.accent} style={{ marginStart: 5 }} />}
-              errorMessage={errors.device ? "Device name can't be empty!" : null}
-              renderErrorMessage={true}
-              onChangeText={onChangeText}
+              style={{ marginStart: isTablet ? 20 : 5, marginEnd: isTablet ? 20 : 5 }}
             />
+            <HelperText
+              visible={true}
+              type="error"
+              theme={{ colors: { error: "red" } }}
+              style={{ marginStart: isTablet ? 15 : 5 }}>
+              Device Name Must not be empty
+            </HelperText>
           </View>
-          <View>
+        </View>
+      </View>
+    );
+  }
+
+  return (
+    <SafeAreaView
+      style={[
+        styles.container,
+        {
+          flexDirection: isTablet && orientation.landscape ? "row" : "column",
+          backgroundColor: colors.accent,
+        },
+      ]}>
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+        }}></View>
+      <View style={{ flex: isTablet ? 1.5 : 3 }}>
+        <View
+          style={{
+            flex: 1,
+            justifyContent: "center",
+            margin: "5%",
+            marginTop: isTablet && orientation.landscape ? "15%" : "5%",
+            marginBottom: isTablet && orientation.landscape ? "15%" : "5%",
+            borderRadius: 25,
+            backgroundColor: "white",
+          }}>
+          <View style={{ flex: 1, justifyContent: "center" }}>
+            {/**For Title & Header */}
+            <View style={{ marginStart: isTablet ? 25 : 15 }}>
+              <Title>Welcome User</Title>
+              <Subheading>Please Sign In to Continue</Subheading>
+            </View>
+          </View>
+          <View style={{ flex: isTablet ? 3 : 5 }}>
+            {/**For Main Content */}
+            {isTablet ? (
+              <View style={{ flex: 1, backgroundColor: "green" }}>{LoginContent()}</View>
+            ) : (
+              <ScrollView style={{ flex: 1 }}>{LoginContent()}</ScrollView>
+            )}
+          </View>
+          <View style={{ flex: 1, justifyContent: "center" }}>
+            {/**For Login Button */}
             <Button
               title="Login"
               loading={false}
-              buttonStyle={{ height: 50, margin: 10, borderRadius: 25 }}
+              containerStyle={{
+                maxWidth: isTablet ? "45%" : "100%",
+                marginStart: isTablet ? 25 : 10,
+                marginEnd: isTablet ? 25 : 10,
+              }}
+              buttonStyle={{ height: 50, borderRadius: 10 }}
               linearGradientProps={{
-                colors: [colors.accentDark, colors.accent],
+                colors: [colors.accent, colors.accentLight],
                 start: { x: 1, y: 1 },
                 end: { x: 1, y: 0 },
               }}
@@ -146,7 +205,7 @@ export default function Login() {
             />
           </View>
         </View>
-      </ImageBackground>
+      </View>
     </SafeAreaView>
   );
 }
@@ -155,6 +214,5 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "center",
-    //alignItems: "center",
   },
 });

@@ -97,7 +97,7 @@ const CartOrderItem = ({ cart }) => {
               <SectionedMultiSelect
                 single={true}
                 disabled={state.indicators.requestedFeature != "order" ? true : false}
-                colors={{ primary: colors.accent }}
+                colors={{ primary: colors.accent, selectToggleTextColor: colors.text }}
                 showDropDowns={false}
                 expandDropDowns={true}
                 items={[
@@ -145,7 +145,7 @@ const CartOrderItem = ({ cart }) => {
               <SectionedMultiSelect
                 single={true}
                 disabled={state.indicators.requestedFeature != "order" ? true : false}
-                colors={{ primary: colors.accent }}
+                colors={{ primary: colors.accent, selectToggleTextColor: colors.text }}
                 showDropDowns={false}
                 expandDropDowns={true}
                 items={[

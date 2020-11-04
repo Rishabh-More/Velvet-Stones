@@ -62,7 +62,12 @@ export default function Verification() {
           tintColor={colors.accentLight}
           offTintColor={colors.accentLight}
           containerStyle={{ marginStart: 15, marginEnd: 15, justifyContent: "center" }}
-          textInputStyle={{ borderRadius: 15, borderWidth: 3, alignSelf: "center", color: colors.textInverse }}
+          textInputStyle={{
+            borderRadius: 15,
+            borderWidth: 3,
+            alignSelf: "center",
+            color: colors.textInverse,
+          }}
           handleTextChange={(text) => {
             console.log("otp entered", text);
           }}
