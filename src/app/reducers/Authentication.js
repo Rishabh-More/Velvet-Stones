@@ -1,6 +1,6 @@
 const initialAuth = {
   isAppStartUp: true,
-  isSignedIn: false,
+  isSignedIn: true,
   authToken: "",
 };
 

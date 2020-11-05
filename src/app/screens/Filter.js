@@ -18,6 +18,7 @@ export default function Filter() {
   const dimensions = useDimensions();
 
   const { query, updateQuery, ApplyFilter, ClearFilter } = useDataFilter();
+  console.log("[HOOK] saved query is", query);
   const { state, dispatch } = useStore();
 
   async function clearFilter() {
@@ -31,6 +32,7 @@ export default function Filter() {
       itemCategory: [],
       itemType: [],
     });
+    await dispatch({ type: "CLEAR_QUERY" });
   }
 
   function SliderThumbs() {
@@ -69,6 +71,7 @@ export default function Filter() {
               </View>
               <MultiSlider
                 useNativeDriver={true}
+                sliderLength={dimensions.window.width - 175}
                 selectedStyle={{ backgroundColor: colors.accent }}
                 containerStyle={{
                   alignItems: "center",
@@ -121,6 +124,7 @@ export default function Filter() {
               </View>
               <MultiSlider
                 useNativeDriver={true}
+                sliderLength={dimensions.window.width - 175}
                 selectedStyle={{ backgroundColor: colors.accent }}
                 containerStyle={{
                   alignItems: "center",
@@ -293,7 +297,11 @@ export default function Filter() {
           title="Apply"
           containerStyle={{ flex: 1 }}
           buttonStyle={{ backgroundColor: colors.accent, margin: 5, height: 50, borderRadius: 15 }}
-          onPress={() => ApplyFilter()}
+          onPress={async () => {
+            console.log("filter query is", query);
+            await dispatch({ type: "UPDATE_QUERY", payload: query });
+            ApplyFilter();
+          }}
         />
       </View>
     </SafeAreaView>

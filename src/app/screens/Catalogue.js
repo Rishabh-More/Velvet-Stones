@@ -48,7 +48,7 @@ export default function Catalogue() {
   }, [state.data.products]);
 
   useEffect(() => {
-    console.log("filter upodated", state.data.filter);
+    console.log("filter updated", state.data.filter);
     if (state.data.filter.length !== 0) {
       //Update the products
       dispatch({ type: "UPDATE_PRODUCTS", payload: state.data.filter });
@@ -105,7 +105,7 @@ export default function Catalogue() {
           borderBottomRightRadius: state.data.cart.length != 0 ? 30 : 0,
         }}>
         <FlatList
-          key={orientation}
+          key={[orientation.landscape, orientation.portrait, state.data.products.length]}
           numColumns={isPhone ? phoneColumns : tabColumns}
           style={styles.flatlist}
           columnWrapperStyle={styles.columns}
@@ -119,9 +119,9 @@ export default function Catalogue() {
               return <View style={styles.hiddenItem} />;
             }
             return state.indicators.isSortByGroup ? (
-              <GroupCatalogueItem design={item} />
+              <GroupCatalogueItem design={item} columns={isPhone ? phoneColumns : tabColumns} />
             ) : (
-              <SingleCatalogueItem product={item} />
+              <SingleCatalogueItem product={item} columns={isPhone ? phoneColumns : tabColumns} />
             );
           }}
         />
@@ -190,8 +190,8 @@ const styles = StyleSheet.create({
     maxHeight: "95%",
   },
   columns: {
-    flexWrap: "wrap",
-    justifyContent: "space-between",
+    //flexWrap: "wrap",
+    justifyContent: "flex-start",
   },
   hiddenItem: {
     backgroundColor: "transparent",

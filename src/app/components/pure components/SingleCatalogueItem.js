@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { isPhone } from "react-native-device-detection";
-import { useDeviceOrientation } from "@react-native-community/hooks";
+import { useDeviceOrientation, useDimensions } from "@react-native-community/hooks";
 import { useTheme } from "@react-navigation/native";
 import { useStore } from "../../config/Store";
 import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
@@ -13,8 +13,9 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 const tabImageThumbHeight = "60%";
 const phoneImageThumbHeight = "55%";
 
-const SingleCatalogueItem = ({ product }) => {
+const SingleCatalogueItem = ({ product, columns }) => {
   const orientation = useDeviceOrientation();
+  const dimensions = useDimensions();
   const { colors, dark } = useTheme();
 
   //State Code
@@ -43,7 +44,8 @@ const SingleCatalogueItem = ({ product }) => {
         styles.container,
         isPhone
           ? { aspectRatio: orientation.portrait ? 1 : 1 }
-          : { aspectRatio: orientation.portrait ? 0.9 : 0.95 },
+          : { aspectRatio: orientation.portrait ? 1.3 : 1.5 },
+        { width: dimensions.screen.width / columns - 2 * 5 }, // Compensated width with margin 2 * margin
       ]}>
       <TouchableOpacity style={{ flex: 2 }} onPress={() => setIsVisible(true)}>
         <Image
@@ -131,7 +133,7 @@ const SingleCatalogueItem = ({ product }) => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    //flex: 1,
     margin: 5,
     borderRadius: 10,
     elevation: 3,
@@ -157,7 +159,7 @@ const styles = StyleSheet.create({
     marginBottom: 5,
     borderRadius: 10,
     maxWidth: "100%",
-    height: "100%", //isPhone ? phoneImageThumbHeight : tabImageThumbHeight,
+    height: "100%",
     resizeMode: "cover",
   },
   button: {
