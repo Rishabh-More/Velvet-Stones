@@ -5,6 +5,7 @@ import { useTheme, useNavigation } from "@react-navigation/native";
 import { SafeAreaView, View, Text, StyleSheet, ScrollView, ImageBackground } from "react-native";
 import { Title, Subheading, TextInput, HelperText } from "react-native-paper";
 import { Button } from "react-native-elements";
+import Toast from "react-native-simple-toast";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
 export default function Login() {
@@ -19,6 +20,10 @@ export default function Login() {
   const [errorPWD, setPWDError] = useState(false);
   const [errorLicense, setLicenseError] = useState(false);
   const [errorDevice, setDeviceError] = useState(false);
+
+  //Error Messages
+  const [messageEmail, setEmailMessage] = useState("Looks Good");
+  const [messagePWD, setPWDMessage] = useState("All Good");
 
   //State Code
   const [login, setLogin] = useState({
@@ -35,6 +40,57 @@ export default function Login() {
       error: "red",
     },
   };
+
+  async function VerifyInputs() {
+    var pattern = /^[a-zA-Z0-9\-_]+(\.[a-zA-Z0-9\-_]+)*@[a-z0-9]+(\-[a-z0-9]+)*(\.[a-z0-9]+(\-[a-z0-9]+)*)*\.[a-z]{2,4}$/;
+    if (login.email == "") {
+      //Email cannot be empty
+      setEmailMessage("Email cannot be Blank!");
+      setEmailError(true);
+      return;
+    } else if (login.email != "" && !pattern.test(login.email)) {
+      //Email is not valid
+      setEmailMessage("This is not a valid email address!");
+      setEmailError(true);
+      return;
+    } else {
+      console.log("resolved email");
+      setEmailMessage("");
+      setEmailError(false);
+    }
+    if (login.password == "") {
+      //Password cannot be empty
+      setPWDMessage("Password cannot be Empty!");
+      setPWDError(true);
+      return;
+    } else if (login.password.length < 5) {
+      //Password must be minimum 5 characters.
+      setPWDMessage("Password must be of minimum 5 characters!");
+      setPWDError(true);
+      return;
+    } else {
+      console.log("resolved password");
+      setPWDMessage("");
+      setPWDError(false);
+    }
+    if (login.licenseKey == "") {
+      //License Key can't be Empty
+      setLicenseError(true);
+      return;
+    } else {
+      console.log("License resolved");
+      setLicenseError(false);
+    }
+    if (login.deviceName == "") {
+      //Device Name can't be empty as well
+      setDeviceError(true);
+      return;
+    } else {
+      console.log("Device name resolved");
+      setDeviceError(false);
+    }
+    Toast.show("Validation Successful");
+  }
 
   function MobileContent() {
     return (
@@ -126,7 +182,10 @@ export default function Login() {
             start: { x: 1, y: 1 },
             end: { x: 1, y: 0 },
           }}
-          onPress={() => navigation.navigate("verify")}
+          onPress={() => {
+            //VerifyInputs()
+            navigation.navigate("verify");
+          }}
         />
       </View>
     );
@@ -138,10 +197,16 @@ export default function Login() {
         {/**Login & Email Wrapper */}
         <View style={{ flexDirection: isTablet ? "row" : "column" }}>
           <View style={styles.input}>
-            <TextInput mode="outlined" label="Email" error={errorEmail} theme={InputTheme} />
+            <TextInput
+              mode="outlined"
+              label="Email"
+              error={errorEmail}
+              theme={InputTheme}
+              onChangeText={(text) => setLogin({ ...login, email: text })}
+            />
             {errorEmail ? (
-              <HelperText visible={true} type="error">
-                Invalid Email Address
+              <HelperText visible={true} type="error" theme={{ colors: { error: "red" } }}>
+                {messageEmail}
               </HelperText>
             ) : null}
           </View>
@@ -154,6 +219,7 @@ export default function Login() {
                 theme={InputTheme}
                 secureTextEntry={secureEntry}
                 style={{ flex: 1, marginBottom: 5, marginEnd: isTablet ? 15 : 5 }}
+                onChangeText={(text) => setLogin({ ...login, password: text })}
               />
               <Button
                 icon={
@@ -174,8 +240,8 @@ export default function Login() {
               />
             </View>
             {errorPWD ? (
-              <HelperText visible={true} type="error">
-                Invalid Password
+              <HelperText visible={true} type="error" theme={{ colors: { error: "red" } }}>
+                {messagePWD}
               </HelperText>
             ) : null}
           </View>
@@ -188,17 +254,24 @@ export default function Login() {
               label="License Key"
               error={errorLicense}
               theme={InputTheme}
+              onChangeText={(text) => setLogin({ ...login, licenseKey: text })}
             />
             {errorLicense ? (
-              <HelperText visible={true} type="error">
-                Invalid License Key
+              <HelperText visible={true} type="error" theme={{ colors: { error: "red" } }}>
+                License Key cannot be Empty!
               </HelperText>
             ) : null}
           </View>
           <View style={styles.input}>
-            <TextInput mode="outlined" label="Device Name" error={errorDevice} theme={InputTheme} />
+            <TextInput
+              mode="outlined"
+              label="Device Name"
+              error={errorDevice}
+              theme={InputTheme}
+              onChangeText={(text) => setLogin({ ...login, deviceName: text })}
+            />
             {errorDevice ? (
-              <HelperText visible={true} type="error">
+              <HelperText visible={true} type="error" theme={{ colors: { error: "red" } }}>
                 Device Name cannot be empty
               </HelperText>
             ) : null}

@@ -5,11 +5,16 @@ import { isTablet, isPhone } from "react-native-device-detection";
 import { SafeAreaView, View, Text, StyleSheet, Alert } from "react-native";
 import { Button } from "react-native-elements";
 import OTPTextView from "react-native-otp-textinput";
+import Toast from "react-native-simple-toast";
 
-export default function Verification() {
+export default function Verification({ login }) {
+  //console.log('login object is', login);
   const navigation = useNavigation();
   const [pending, setPending] = useState(true);
   const { colors, dark } = useTheme();
+
+  //State Code
+  const [otp, setOtp] = useState("");
 
   useEffect(
     () =>
@@ -37,6 +42,20 @@ export default function Verification() {
       }),
     [navigation]
   );
+
+  function ValidateOTP() {
+    if (otp == "") {
+      Toast.show("ERROR: OTP cannot be blank!");
+      return;
+    } else if (otp != "" && otp.length < 4) {
+      Toast.show("ERROR: OTP must be of 4 Digits!");
+      return;
+    } else {
+      //Success
+      Toast.show("OTP Validated");
+    }
+  }
+
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.accentDark }]}>
       <View style={{ flex: 1 }} />
@@ -69,7 +88,7 @@ export default function Verification() {
             color: colors.textInverse,
           }}
           handleTextChange={(text) => {
-            console.log("otp entered", text);
+            setOtp(text);
           }}
         />
         <Button
@@ -82,6 +101,7 @@ export default function Verification() {
             start: { x: 1, y: 1 },
             end: { x: 1, y: 0 },
           }}
+          onPress={() => ValidateOTP()}
         />
       </View>
     </SafeAreaView>
