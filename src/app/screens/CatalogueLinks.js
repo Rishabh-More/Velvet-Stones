@@ -15,6 +15,9 @@ export default function CatalogueLinks() {
   const orientation = useDeviceOrientation();
   const dimensions = useDimensions();
 
+  const phoneColumns = isPhone && orientation.portrait ? 1 : 2;
+  const tabColumns = isTablet && orientation.portrait ? 2 : 3;
+
   //State Codes
   const { state, dispatch } = useStore();
   const [visible, setVisible] = useState(true);
@@ -63,7 +66,8 @@ export default function CatalogueLinks() {
       </Appbar>
       <View style={{ flex: 1, alignItems: "center" }}>
         <FlatList
-          key={[orientation, refresh]}
+          key={[orientation.landscape, orientation.portrait, refresh]}
+          numColumns={isPhone ? phoneColumns : tabColumns}
           style={styles.flatlist}
           contentContainerStyle={
             state.data.links.length == 0 ? { flexGrow: 1, justifyContent: "center" } : {}
@@ -71,7 +75,9 @@ export default function CatalogueLinks() {
           data={state.data.links}
           extraData={refresh}
           keyExtractor={(item) => item.id}
-          renderItem={({ item }) => <CatalogueLinkItem link={item} />}
+          renderItem={({ item }) => (
+            <CatalogueLinkItem link={item} columns={isPhone ? phoneColumns : tabColumns} />
+          )}
           onRefresh={() => {
             setRefreshing(true);
             fetchCatalogueLinks();

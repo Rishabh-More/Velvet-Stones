@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigation, useTheme } from "@react-navigation/native";
+import { useDeviceOrientation } from "@react-native-community/hooks";
+import { isPhone, isTablet } from "react-native-device-detection";
 import { shortShareableLink } from "../api/ApiService";
 import { SafeAreaView, StyleSheet, View, Text, Share } from "react-native";
 import { Title, Subheading } from "react-native-paper";
@@ -10,6 +12,7 @@ export default function LinkSuccess({ success }) {
   console.log("link success", success);
   const { colors, dark } = useTheme();
   const navigation = useNavigation();
+  const orientation = useDeviceOrientation();
   const [shareable, setShareable] = useState("Getting Url...");
 
   useEffect(() => {
@@ -78,7 +81,7 @@ export default function LinkSuccess({ success }) {
             />
           }
           buttonStyle={{
-            width: "75%",
+            width: isPhone ? "75%" : "40%",
             height: 50,
             backgroundColor: colors.accent,
             borderRadius: 25,

@@ -13,7 +13,11 @@ import CartOrderItem from "../components/pure components/CartOrderItem";
 export default function Cart() {
   const { colors, dark } = useTheme();
   const navigation = useNavigation();
+  const orientation = useDeviceOrientation();
   const dimensions = useDimensions();
+
+  const phoneColumns = isPhone && orientation.portrait ? 1 : 2;
+  const tabColumns = isTablet && orientation.portrait ? 2 : 3;
 
   const { state, dispatch } = useStore();
 
@@ -58,6 +62,8 @@ export default function Cart() {
       </Appbar>
       <View style={{ flex: 1 }}>
         <FlatList
+          key={[orientation.landscape, orientation.portrait]}
+          numColumns={isPhone ? phoneColumns : tabColumns}
           style={styles.flatlist}
           data={state.data.cart}
           keyExtractor={(item) => item.skuNumber}

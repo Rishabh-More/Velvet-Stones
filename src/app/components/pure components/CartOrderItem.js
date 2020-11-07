@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { useTheme } from "@react-navigation/native";
 import { useStore } from "../../config/Store";
 import { usePrevious } from "../../hooks/usePrevious";
+import { isPhone, isTablet } from "react-native-device-detection";
 import { View, Text, StyleSheet, Image } from "react-native";
 import { Card, Title, TextInput } from "react-native-paper";
 import { Button } from "react-native-elements";
@@ -44,6 +45,14 @@ const CartOrderItem = ({ cart }) => {
       console.log("couldn't remove from cart", error);
     }
   }
+
+  const minusIcon = (isPlusDisabled) => {
+    return <MaterialCommunityIcons name="minus" size={isPhone ? 18 : 24} color={colors.accent} />;
+  };
+
+  const plusIcon = (isPlusDisabled) => {
+    return <MaterialCommunityIcons name="plus" size={isPhone ? 18 : 24} color={colors.accent} />;
+  };
   return (
     <Card style={styles.container}>
       <View style={{ flex: 1, flexDirection: "row" }}>
@@ -97,7 +106,11 @@ const CartOrderItem = ({ cart }) => {
               <SectionedMultiSelect
                 single={true}
                 disabled={state.indicators.requestedFeature != "order" ? true : false}
-                colors={{ primary: colors.accent, selectToggleTextColor: colors.text }}
+                colors={{
+                  primary: colors.accent,
+                  selectToggleTextColor:
+                    state.indicators.requestedFeature == "order" ? colors.text : colors.disabled,
+                }}
                 showDropDowns={false}
                 expandDropDowns={true}
                 items={[
@@ -145,7 +158,11 @@ const CartOrderItem = ({ cart }) => {
               <SectionedMultiSelect
                 single={true}
                 disabled={state.indicators.requestedFeature != "order" ? true : false}
-                colors={{ primary: colors.accent, selectToggleTextColor: colors.text }}
+                colors={{
+                  primary: colors.accent,
+                  selectToggleTextColor:
+                    state.indicators.requestedFeature == "order" ? colors.text : colors.disabled,
+                }}
                 showDropDowns={false}
                 expandDropDowns={true}
                 items={[
@@ -207,7 +224,7 @@ const CartOrderItem = ({ cart }) => {
                 margin: 5,
                 alignSelf: "flex-end",
                 borderColor: colors.accent,
-                borderRadius: 5,
+                borderRadius: 10,
                 borderWidth: 0.5,
               }}
               onPress={() => removeFromCart()}
@@ -226,14 +243,18 @@ const CartOrderItem = ({ cart }) => {
                 start={1}
                 min={1}
                 max={100}
+                minusIcon={(isMinusDiabled) => minusIcon(isMinusDiabled)}
+                plusIcon={(isPlusDisabled) => plusIcon(isPlusDisabled)}
                 buttonStyle={{
+                  aspectRatio: 1,
+                  width: isPhone ? 25 : 50,
                   margin: 5,
                   borderColor: colors.accent,
                   borderRadius: 10,
                   borderWidth: 1.5,
                 }}
                 buttonTextStyle={{ color: colors.accent }}
-                countTextStyle={{ color: colors.accent }}
+                countTextStyle={{ color: colors.accent, fontSize: isPhone ? 14 : 8 }}
                 onChange={(value) => {
                   setProps({ ...props, orderProductQuantity: value });
                   if (updated) setUpdated(false);

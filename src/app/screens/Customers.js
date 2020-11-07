@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useNavigation, useTheme } from "@react-navigation/native";
+import { useDeviceOrientation } from "@react-native-community/hooks";
 import { useStore } from "../config/Store";
+import { isPhone, isTablet } from "react-native-device-detection";
 import { getCustomersForShop, addCustomerToShop, generateOrder } from "../api/ApiService";
 import { SafeAreaView, ScrollView, View, Text, StyleSheet } from "react-native";
 import { Card, Title, TextInput, HelperText, Divider } from "react-native-paper";
@@ -11,6 +13,7 @@ import Toast from "react-native-simple-toast";
 
 export default function Customers() {
   const navigation = useNavigation();
+  const orientation = useDeviceOrientation();
   const { colors, dark } = useTheme();
 
   //State Codes
@@ -168,74 +171,92 @@ export default function Customers() {
     }
   }
 
-  return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView>
-        <Card style={{ margin: 5, borderRadius: 15 }}>
-          <Title style={{ marginStart: 10, marginTop: 10 }}>Shop Customers</Title>
-          {isVisible ? (
+  function Customers() {
+    return (
+      <View style={{ flex: 1, backgroundColor: "white", margin: 5, borderRadius: 15 }}>
+        <Title style={styles.title}>Shop Customers</Title>
+        {isVisible ? (
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "center",
+              alignItems: "center",
+              margin: 10,
+            }}>
+            <Fold size={24} color={colors.accent} style={{ margin: 10 }} />
+            <Text style={{ color: colors.text }}>Please Wait, getting your Customers</Text>
+          </View>
+        ) : null}
+        <MultiSelect
+          single={true}
+          items={picker}
+          uniqueKey="id"
+          hideTags={false}
+          fixedHeight={true}
+          selectText={selected.name != "" ? selected.name : "Select Customer"}
+          selectedItems={[selected]}
+          styleMainWrapper={styles.selectMainWrapper}
+          styleDropdownMenu={styles.selectDropdownMenu}
+          styleDropdownMenuSubsection={[
+            styles.selectDropdownMenuSubSection,
+            { backgroundColor: colors.primary, borderColor: colors.border },
+          ]}
+          styleTextDropdownSelected={[
+            styles.selectTextDropdownSelected,
+            { color: selected.name != "" ? colors.accent : colors.text },
+          ]}
+          styleInputGroup={[styles.selectInputGroup, { backgroundColor: colors.primary }]}
+          styleSelectorContainer={[
+            styles.selectSelectorContainer,
+            { backgroundColor: colors.primary, borderColor: colors.primary },
+          ]}
+          styleListContainer={{ backgroundColor: colors.primary }}
+          styleRowList={{ backgroundColor: colors.primary }}
+          itemTextColor={colors.textSubtle}
+          submitButtonColor={colors.accentDark}
+          onSelectedItemsChange={(value) => {
+            let picked = customers.find((item) => item.id == parseInt(value));
+            console.log("picked customer object", picked);
+            setSelected({
+              ...selected,
+              id: parseInt(picked.id),
+              name: picked.name,
+              email: picked.email,
+              phone: picked.phone,
+              addressLine1: picked.addressLine1,
+              shopId: picked.shopId,
+            });
+          }}
+        />
+      </View>
+    );
+  }
+
+  function Seperator() {
+    return (
+      <View style={{ flexDirection: "row", alignItems: "center" }}>
+        {isPhone ? <Divider style={styles.divider} /> : null}
+        <Text style={{ margin: 5, color: "grey" }}>or</Text>
+        {isPhone ? <Divider style={styles.divider} /> : null}
+      </View>
+    );
+  }
+
+  function CreateCustomer() {
+    return (
+      <Card style={{ flex: 2, margin: 5, borderRadius: 15 }}>
+        <View
+        //style={{ flex: 1 }}
+        >
+          <Title style={styles.title}>Enter Customer Details</Title>
+          <View style={{ flexDirection: isTablet && orientation.landscape ? "row" : "column" }}>
             <View
               style={{
-                flexDirection: "row",
-                margin: 10,
-                justifyContent: "center",
-                alignItems: "center",
+                flex: isTablet && orientation.landscape ? 1 : 0,
+                marginStart: 10,
+                marginEnd: isTablet && orientation.landscape ? 5 : 10,
+                margin: 5,
               }}>
-              <Fold size={24} color={colors.accent} style={{ margin: 10 }} />
-              <Text style={{ color: colors.text }}>Please Wait, getting your Customers</Text>
-            </View>
-          ) : null}
-          <MultiSelect
-            single={true}
-            items={picker}
-            uniqueKey="id"
-            hideTags={false}
-            fixedHeight={true}
-            selectText={selected.name != "" ? selected.name : "Select Customer"}
-            selectedItems={[selected]}
-            styleMainWrapper={styles.selectMainWrapper}
-            styleDropdownMenu={styles.selectDropdownMenu}
-            styleDropdownMenuSubsection={[
-              styles.selectDropdownMenuSubSection,
-              { backgroundColor: colors.primary, borderColor: colors.border },
-            ]}
-            styleTextDropdownSelected={[
-              styles.selectTextDropdownSelected,
-              { color: selected.name != "" ? colors.accent : colors.text },
-            ]}
-            styleInputGroup={[styles.selectInputGroup, { backgroundColor: colors.primary }]}
-            styleSelectorContainer={[
-              styles.selectSelectorContainer,
-              { backgroundColor: colors.primary, borderColor: colors.primary },
-            ]}
-            styleListContainer={{ backgroundColor: colors.primary }}
-            styleRowList={{ backgroundColor: colors.primary }}
-            itemTextColor={colors.textSubtle}
-            submitButtonColor={colors.accentDark}
-            onSelectedItemsChange={(value) => {
-              let picked = customers.find((item) => item.id == parseInt(value));
-              console.log("picked customer object", picked);
-              setSelected({
-                ...selected,
-                id: parseInt(picked.id),
-                name: picked.name,
-                email: picked.email,
-                phone: picked.phone,
-                addressLine1: picked.addressLine1,
-                shopId: picked.shopId,
-              });
-            }}
-          />
-        </Card>
-        <View style={{ flexDirection: "row", alignItems: "center" }}>
-          <Divider style={{ flex: 1, width: "100%" }} />
-          <Text style={{ margin: 5, color: "grey" }}>or</Text>
-          <Divider style={{ flex: 1 }} />
-        </View>
-        <Card style={{ margin: 5, borderRadius: 15 }}>
-          <View style={{ flex: 1 }}>
-            <Title style={{ marginStart: 10, marginTop: 10 }}>Enter Customer Details</Title>
-            <View style={{ marginStart: 10, marginEnd: 10, margin: 5 }}>
               <TextInput
                 mode="outlined"
                 label="Customer Name (required)"
@@ -252,7 +273,13 @@ export default function Customers() {
                 </HelperText>
               ) : null}
             </View>
-            <View style={{ marginStart: 10, marginEnd: 10, margin: 5 }}>
+            <View
+              style={{
+                flex: isTablet && orientation.landscape ? 1 : 0,
+                marginStart: isTablet && orientation.landscape ? 5 : 10,
+                marginEnd: 10,
+                margin: 5,
+              }}>
               <TextInput
                 mode="outlined"
                 label="Customer Email (required)"
@@ -269,64 +296,88 @@ export default function Customers() {
                 </HelperText>
               ) : null}
             </View>
-            <View style={{ marginStart: 10, marginEnd: 10, margin: 5 }}>
-              <TextInput
-                mode="outlined"
-                label="Customer Address (required)"
-                value={selected.addressLine1}
-                error={errorAddress}
-                theme={{
-                  colors: { primary: colors.accent, background: colors.primary, error: "red" },
-                }}
-                multiline={true}
-                onChangeText={(text) => setSelected({ ...selected, addressLine1: text })}
-              />
-              {errorAddress ? (
-                <HelperText
-                  type="error"
-                  visible={errorAddress}
-                  theme={{ colors: { error: "red" } }}>
-                  Customer Address cannot be Empty
-                </HelperText>
-              ) : null}
-            </View>
-            <View
-              style={{
-                flexDirection: "row",
-                marginStart: 10,
-                marginEnd: 10,
-                marginTop: 5,
-                marginBottom: 15,
-              }}>
-              <TextInput
-                mode="outlined"
-                label="Contact No."
-                value={selected.phone.toString()}
-                theme={{ colors: { primary: colors.accent, background: colors.primary } }}
-                style={{ flex: 1, margin: 5, marginStart: 0 }}
-                onChangeText={(text) => setSelected({ ...selected, phone: parseInt(text) || 0 })}
-              />
-              <TextInput
-                mode="outlined"
-                label="Order Remarks"
-                value={order.remarks}
-                style={{ flex: 1, margin: 5, marginEnd: 0 }}
-                theme={{ colors: { primary: colors.accent, background: colors.primary } }}
-                onChangeText={(text) => setOrder({ ...order, remarks: text })}
-              />
-            </View>
           </View>
-        </Card>
-      </ScrollView>
-      <Divider style={{ width: "90%", alignSelf: "center" }} />
+          <View style={styles.address}>
+            <TextInput
+              mode="outlined"
+              label="Customer Address (required)"
+              value={selected.addressLine1}
+              error={errorAddress}
+              theme={{
+                colors: { primary: colors.accent, background: colors.primary, error: "red" },
+              }}
+              multiline={true}
+              onChangeText={(text) => setSelected({ ...selected, addressLine1: text })}
+            />
+            {errorAddress ? (
+              <HelperText type="error" visible={errorAddress} theme={{ colors: { error: "red" } }}>
+                Customer Address cannot be Empty
+              </HelperText>
+            ) : null}
+          </View>
+          <View style={styles.rowWrapper}>
+            <TextInput
+              mode="outlined"
+              label="Contact No."
+              value={selected.phone.toString()}
+              theme={{ colors: { primary: colors.accent, background: colors.primary } }}
+              style={styles.contact}
+              onChangeText={(text) => setSelected({ ...selected, phone: parseInt(text) || 0 })}
+            />
+            <TextInput
+              mode="outlined"
+              label="Order Remarks"
+              value={order.remarks}
+              style={styles.remarks}
+              theme={{ colors: { primary: colors.accent, background: colors.primary } }}
+              onChangeText={(text) => setOrder({ ...order, remarks: text })}
+            />
+          </View>
+        </View>
+      </Card>
+    );
+  }
+
+  function SubmitOrder() {
+    return (
       <View>
-        <Button
-          title="Generate Order"
-          loading={loading}
-          buttonStyle={{ height: 50, backgroundColor: colors.accent, borderRadius: 15 }}
-          containerStyle={{ margin: 10 }}
-          onPress={() => ValidateCustomer()}
-        />
+        <Divider style={{ width: isPhone ? "90%" : "35%", alignSelf: "center" }} />
+        <View>
+          <Button
+            title="Generate Order"
+            loading={loading}
+            buttonStyle={{
+              height: 50,
+              width: isPhone ? "100%" : "40%",
+              alignSelf: "center",
+              backgroundColor: colors.accent,
+              borderRadius: 15,
+            }}
+            containerStyle={{ margin: 10 }}
+            onPress={() => ValidateCustomer()}
+          />
+        </View>
+      </View>
+    );
+  }
+
+  return (
+    <SafeAreaView style={styles.container}>
+      <View style={{ flex: 1, justifyContent: "center" }}>
+        {isPhone ? (
+          <ScrollView>
+            {Customers()}
+            {Seperator()}
+            {CreateCustomer()}
+          </ScrollView>
+        ) : (
+          <View style={styles.tabContent}>
+            {Customers()}
+            {Seperator()}
+            {CreateCustomer()}
+          </View>
+        )}
+        {SubmitOrder()}
       </View>
     </SafeAreaView>
   );
@@ -336,6 +387,42 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "center",
+  },
+  tabContent: {
+    flexDirection: "row",
+    alignItems: "center",
+    margin: "5%",
+  },
+  title: {
+    marginStart: 10,
+    marginTop: 10,
+  },
+  address: {
+    marginStart: 10,
+    marginEnd: 10,
+    margin: 5,
+  },
+  contact: {
+    flex: 1,
+    margin: 5,
+    marginStart: 0,
+  },
+  remarks: {
+    flex: 1,
+    margin: 5,
+    marginEnd: 0,
+  },
+  rowWrapper: {
+    flexDirection: "row",
+    marginStart: 10,
+    marginEnd: 10,
+    marginTop: 5,
+    marginBottom: 15,
+  },
+  divider: {
+    flex: 1,
+    marginStart: 10,
+    marginEnd: 10,
   },
   selectMainWrapper: {
     margin: 5,

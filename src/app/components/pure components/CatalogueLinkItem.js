@@ -1,7 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useDeviceOrientation } from "@react-native-community/hooks";
+import { useDeviceOrientation, useDimensions } from "@react-native-community/hooks";
 import { useTheme } from "@react-navigation/native";
 import { useStore } from "../../config/Store";
+import { isPhone, isTablet } from "react-native-device-detection";
 import { regenerateLinkOtp, expireCatalogueLink, shortShareableLink } from "../../api/ApiService";
 import { View, Text, StyleSheet, Share, Alert } from "react-native";
 import { Card, Title, Portal, Dialog } from "react-native-paper";
@@ -10,8 +11,9 @@ import { Fold } from "react-native-animated-spinkit";
 import Toast from "react-native-simple-toast";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
-const CatalogueLinkItem = ({ link }) => {
+const CatalogueLinkItem = ({ link, columns }) => {
   const orientation = useDeviceOrientation();
+  const dimensions = useDimensions();
   const { colors, dark } = useTheme();
 
   //State Code
@@ -120,7 +122,11 @@ const CatalogueLinkItem = ({ link }) => {
   }
 
   return (
-    <Card style={styles.container}>
+    <Card
+      style={[
+        styles.container,
+        { width: dimensions.screen.width / columns - 2 * 5 }, // Compensated width with margin 2 * margin
+      ]}>
       <View style={styles.content}>
         <View style={styles.info}>
           <Title style={{ marginTop: 10, marginStart: 10 }}>{link.name}</Title>
@@ -152,7 +158,7 @@ const CatalogueLinkItem = ({ link }) => {
                 <Button
                   loading={generating}
                   buttonStyle={{ backgroundColor: colors.accent }}
-                  containerStyle={{ width: 125, margin: 5, borderRadius: 10 }}
+                  containerStyle={{ width: isPhone ? 125 : 150, margin: 5, borderRadius: 10 }}
                   title="Regenerate OTP"
                   onPress={() => generateNewOtp()}
                 />
@@ -207,7 +213,7 @@ const CatalogueLinkItem = ({ link }) => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    //flex: 1,
     margin: 5,
     borderRadius: 15,
     elevation: 3,

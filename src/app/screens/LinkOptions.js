@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import { useStore } from "../config/Store";
+import { isPhone, isTablet } from "react-native-device-detection";
 import { SafeAreaView, View, Text, StyleSheet } from "react-native";
 import { TextInput, HelperText } from "react-native-paper";
 import { Button } from "react-native-elements";
@@ -68,10 +69,26 @@ export default function LinkOptions() {
     setVisible(false);
   }
 
+  function ExportButton() {
+    return (
+      <View>
+        <Button
+          title="Generate Link"
+          loading={visible}
+          buttonStyle={{ backgroundColor: colors.accent, height: 50, borderRadius: 15 }}
+          containerStyle={{ margin: 10 }}
+          onPress={() => {
+            ValidateOptions();
+          }}
+        />
+      </View>
+    );
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={{ flex: 1, justifyContent: "center" }}>
-        <View style={{ margin: 30 }}>
+        <View style={{ margin: isPhone ? "5%" : "25%" }}>
           <View style={{ flexDirection: "column" }}>
             <TextInput
               mode="outlined"
@@ -114,6 +131,8 @@ export default function LinkOptions() {
               style={{
                 flexDirection: "row",
                 alignItems: "center",
+                marginStart: isTablet ? "15%" : 0,
+                marginEnd: isTablet ? "15%" : 0,
                 marginTop: 10,
                 marginBottom: 10,
               }}>
@@ -141,19 +160,10 @@ export default function LinkOptions() {
               />
             </View>
           ) : null}
+          {isTablet ? ExportButton() : null}
         </View>
       </View>
-      <View>
-        <Button
-          title="Generate Link"
-          loading={visible}
-          buttonStyle={{ backgroundColor: colors.accent, height: 50, borderRadius: 15 }}
-          containerStyle={{ margin: 10 }}
-          onPress={() => {
-            ValidateOptions();
-          }}
-        />
-      </View>
+      {isPhone ? ExportButton() : null}
     </SafeAreaView>
   );
 }
