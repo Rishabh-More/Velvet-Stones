@@ -5,6 +5,14 @@
     "name": "VelvetStones",
     "slug": "VelvetStones",
     "version": "1.0.0",
-    "assetBundlePatterns": ["**/*"]
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "android": {
+      "package": "com.invizio.velvetstones"
+    },
+    "ios": {
+      "bundleIdentifier": "com.invizio.velvetstones"
+    }
   }
 }

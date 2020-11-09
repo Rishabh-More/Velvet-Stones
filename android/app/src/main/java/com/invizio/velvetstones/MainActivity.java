@@ -1,4 +1,4 @@
-package com.velvetstones;
+package com.invizio.velvetstones;
 
 import android.os.Bundle;
 import android.content.Intent;

@@ -28,6 +28,7 @@
     "react-native-animated-spinkit": "^1.4.1",
     "react-native-counters": "^1.2.0",
     "react-native-device-detection": "^0.2.1",
+    "react-native-device-info": "^7.0.2",
     "react-native-dropdown-picker": "^3.7.0",
     "react-native-elements": "^2.3.2",
     "react-native-gesture-handler": "~1.6.0",
@@ -61,5 +62,7 @@
   "jest": {
     "preset": "react-native"
   },
-  "private": true
+  "private": true,
+  "name": "Velvet-Stones",
+  "version": "1.0.0"
 }

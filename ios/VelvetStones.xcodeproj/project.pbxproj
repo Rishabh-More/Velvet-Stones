@@ -412,11 +412,13 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = org.name.VelvetStones;
-				PRODUCT_NAME = VelvetStones;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.invizio.velvetstones";
+				PRODUCT_NAME = velvetstones;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
+				TARGETED_DEVICE_FAMILY = "1";
+				CODE_SIGN_ENTITLEMENTS = VelvetStones/velvetstones.entitlements;
 			};
 			name = Debug;
 		};
@@ -435,10 +437,12 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = org.name.VelvetStones;
-				PRODUCT_NAME = VelvetStones;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.invizio.velvetstones";
+				PRODUCT_NAME = velvetstones;
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
+				TARGETED_DEVICE_FAMILY = "1";
+				CODE_SIGN_ENTITLEMENTS = VelvetStones/velvetstones.entitlements;
 			};
 			name = Release;
 		};
@@ -499,6 +503,7 @@
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
+				CODE_SIGN_ENTITLEMENTS = VelvetStones/velvetstones.entitlements;
 			};
 			name = Debug;
 		};
@@ -552,6 +557,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
+				CODE_SIGN_ENTITLEMENTS = VelvetStones/velvetstones.entitlements;
 			};
 			name = Release;
 		};

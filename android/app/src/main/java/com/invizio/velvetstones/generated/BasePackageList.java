@@ -1,4 +1,4 @@
-package com.velvetstones.generated;
+package com.invizio.velvetstones.generated;
 
 import java.util.Arrays;
 import java.util.List;
