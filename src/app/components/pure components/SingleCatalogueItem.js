@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { isPhone } from "react-native-device-detection";
 import { useDeviceOrientation, useDimensions } from "@react-native-community/hooks";
-import { useTheme } from "@react-navigation/native";
+import { useTheme, useNavigation } from "@react-navigation/native";
 import { useStore } from "../../config/Store";
 import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
 import { Card, Title } from "react-native-paper";
@@ -16,11 +16,23 @@ const phoneImageThumbHeight = "55%";
 const SingleCatalogueItem = ({ product, columns }) => {
   const orientation = useDeviceOrientation();
   const dimensions = useDimensions();
+  const navigation = useNavigation();
   const { colors, dark } = useTheme();
 
   //State Code
   const { state, dispatch } = useStore();
   const [visible, setIsVisible] = useState(false);
+  const [added, setAdded] = useState(false);
+
+  useEffect(() => {
+    let found = state.data.cart.find((item) => item.skuNumber == product.skuNumber);
+    if (found != null) {
+      //Item already exists in array
+      setAdded(true);
+    } else {
+      setAdded(false);
+    }
+  }, [state.data.cart.length]);
 
   async function AddProductToCart() {
     const { shopId, createdAt, updatedAt, ...rest } = product;
@@ -46,7 +58,8 @@ const SingleCatalogueItem = ({ product, columns }) => {
           ? { aspectRatio: orientation.portrait ? 1 : 1 }
           : { aspectRatio: orientation.portrait ? 1.3 : 1.5 },
         { width: dimensions.screen.width / columns - 2 * 5 }, // Compensated width with margin 2 * margin
-      ]}>
+      ]}
+      onPress={() => navigation.navigate("details", product)}>
       <TouchableOpacity style={{ flex: 2 }} onPress={() => setIsVisible(true)}>
         <Image
           style={styles.image}
@@ -118,9 +131,18 @@ const SingleCatalogueItem = ({ product, columns }) => {
           </View>
           <View style={styles.button}>
             <Button
-              type="outline"
-              icon={<Icon name="cart-outline" size={20} color={colors.accent} />}
-              buttonStyle={{ borderColor: colors.accent }}
+              type={added ? "solid" : "outline"}
+              icon={
+                <Icon
+                  name="cart-outline"
+                  size={20}
+                  color={added ? colors.primary : colors.accent}
+                />
+              }
+              buttonStyle={{
+                borderColor: colors.accent,
+                backgroundColor: added ? colors.accent : colors.primary,
+              }}
               containerStyle={{ margin: 5, marginBottom: 5, width: 50 }}
               onPress={() => AddProductToCart()}
             />

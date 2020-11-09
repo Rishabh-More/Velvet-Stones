@@ -1,5 +1,5 @@
 import React from "react";
-import { createStackNavigator } from "@react-navigation/stack";
+import { createStackNavigator, CardStyleInterpolators } from "@react-navigation/stack";
 
 import Catalogue from "../screens/Catalogue";
 import ProductDetails from "../screens/ProductDetails";
@@ -7,9 +7,15 @@ import ProductDetails from "../screens/ProductDetails";
 const ProductStack = createStackNavigator();
 
 const CatalogueStacks = () => (
-  <ProductStack.Navigator headerMode="none">
-    <ProductStack.Screen name="catalogue" component={Catalogue} />
-    <ProductStack.Screen name="details" component={ProductDetails} />
+  <ProductStack.Navigator
+    //headerMode="none"
+    screenOptions={{ cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS }}>
+    <ProductStack.Screen name="catalogue" component={Catalogue} options={{ headerShown: false }} />
+    <ProductStack.Screen
+      name="details"
+      component={ProductDetails}
+      //options={{ headerTitle: "Details" }}
+    />
   </ProductStack.Navigator>
 );
 
